@@ -1,0 +1,23 @@
+{
+  "name": "opencals",
+  "owner": {
+    "name": "Opencals",
+    "email": "hello@opencals.com"
+  },
+  "metadata": {
+    "description": "Agent Skills for building booking integrations on the Opencals hosted API",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "opencals",
+      "description": "Build booking integrations on the Opencals API: a ground-truth storefront-API/SDK reference skill plus a build-a-booking-site (template scaffolding) skill.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./opencals-storefront-api",
+        "./opencals-build-booking-site"
+      ]
+    }
+  ]
+}
