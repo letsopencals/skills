@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Agent Skills for building booking integrations on the Opencals hosted API",
-    "version": "1.0.0"
+    "version": "1.0.1"
   },
   "plugins": [
     {

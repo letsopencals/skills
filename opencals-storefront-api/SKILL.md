@@ -82,6 +82,13 @@ Full setup details, the complete service list, `X-Api-Version`, and the
 | `references/rate-limiting.md` | 429 handling, `withRateLimitRetry` backoff pattern, allowed origins, per-key throttling |
 | `references/debugging.md` | reading `OpencalsApiError`, the top recurring mistakes and how to spot them |
 
+## Resources
+
+- [Opencals](https://opencals.com) — main site
+- [Docs & API reference](https://opencals.com/docs)
+- [@opencals/storefront-sdk on npm](https://www.npmjs.com/package/@opencals/storefront-sdk)
+- [Dashboard](https://app.opencals.com) — create stores, manage storefront API keys
+
 ## Guardrails
 
 - **Never invent SDK names.** Methods, params and enums must match the generated

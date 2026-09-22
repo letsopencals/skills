@@ -136,6 +136,13 @@ the three-rule decision table, and the grid data strategy are in
 `references/resource-booking.md` (and the API shapes in the
 `opencals-storefront-api` skill's `custom-duration.md` / `availability.md`).
 
+## Resources
+
+- [Opencals](https://opencals.com) — main site
+- [Docs & API reference](https://opencals.com/docs)
+- [@opencals/storefront-sdk on npm](https://www.npmjs.com/package/@opencals/storefront-sdk)
+- [Dashboard](https://app.opencals.com) — create stores, manage storefront API keys
+
 ## Guardrails
 
 - Never hard-code services, prices or availability in the frontend — they come
