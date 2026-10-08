@@ -71,6 +71,7 @@ Full setup details, the complete service list, `X-Api-Version`, and the
 | File | Covers |
 |------|--------|
 | `references/setup.md` | `setupOpencals`, service classes, versioning header, `OpencalsApiError`, `throwOnError` |
+| `references/products-variants.md` | product groups vs variants (read the variant), default `image` vs unordered `images`, building a gallery |
 | `references/availability.md` | `getCurrentAvailabilities` vs `getCurrentAvailabilitiesMerged`, `duration`, `excludeAppointmentId`, slot shape, grid fan-out, multi-day ranges + client-side fit |
 | `references/custom-duration.md` | `allowCustomDuration` / `maxDuration`, quantity = duration-units pricing rule, multi-day (1-day base) bookings |
 | `references/guests-attendees.md` | `numberOfAttendees`, `maxAttendees`/`attendees`, `addGuest` / `removeGuest` |
@@ -95,6 +96,8 @@ Full setup details, the complete service list, `X-Api-Version`, and the
   SDK. When unsure, read `references/*` or the SDK's `.d.ts` files.
 - **Never hard-code services, prices, availability, staff or locations.** They
   come from the store via the API and are configured in the Opencals dashboard.
+- **Read product data from the variant, not the group.** `images` is unordered,
+  so never use `images[0]` as the main photo. → `references/products-variants.md`
 - **All slot dates/times are UTC.** Convert to the customer's timezone for
   display only; send `timezone` on availability queries so slots align to the
   local day.

@@ -30,6 +30,9 @@ Clone with `npx create-next-app -e <repo-url> my-site`.
 ## Content that comes from the API (do NOT hard-code)
 
 - Services / products, prices, durations → dashboard.
+- Product photos, the store logo and the banner (cover) → dashboard. Render the
+  variant's default `image` first and the rest of `images` as a gallery; don't
+  ship copies in `public/`. See `opencals-storefront-api/references/products-variants.md`.
 - Staff members and their availability → dashboard.
 - Locations (for multi-location stores) → dashboard.
 - Store-level settings (currency, time/date format) are read at runtime via
