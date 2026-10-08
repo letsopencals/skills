@@ -10,9 +10,7 @@ your own backoff rather than depending on it.
 
 ## Canonical client pattern: retry with exponential backoff + jitter
 
-This is the shipped pattern from
-`widgets/podcast-house-booking-widget/src/api/rateLimit.ts`. Wrap every
-fan-out / burst-prone SDK call in it.
+Wrap every fan-out / burst-prone SDK call in it.
 
 ```ts
 const MAX_ATTEMPTS = 4;
@@ -63,7 +61,7 @@ const slots = await withRateLimitRetry(
 ## API-key hardening (server side)
 
 Storefront keys can be configured (in the dashboard) with an **allowed-origins**
-allowlist (guard-enforced) and per-(key+IP) throttling. Keep the key server-side.
+allowlist, enforced by the API, and are throttled per key + client IP. Keep the key server-side.
 If you're behind a proxy/CDN, make sure the real client IP reaches the API
 (trust-proxy) so throttling and origin checks key off the right address, not your
 edge node.

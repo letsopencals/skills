@@ -31,7 +31,8 @@ not the API.
 ## Where to look
 
 - Exact request/response shapes: the generated SDK types
-  (`@opencals/storefront-sdk` `.d.ts`, or source `src/client/{sdk,types,zod}.gen.ts`).
-- Working call sequences: the shipping templates' `app/api/*` routes and the
-  storefront app's `actions/*` and `contexts/cart-context.tsx`.
+  (`@opencals/storefront-sdk` `.d.ts`, or source `src/client/{sdk,types,zod}.gen.ts`
+  in `github.com/letsopencals/storefront-sdk`).
+- Working call sequences: the official templates' `app/api/*` routes and
+  `contexts/cart-context.tsx`.
 - Enable `logging: true` in `setupOpencals` during development to see requests.

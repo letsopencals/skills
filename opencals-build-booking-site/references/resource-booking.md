@@ -79,11 +79,3 @@ paint a Playtomic-style courts × time grid:
 Booking, cart and checkout are unchanged from `booking-flow.md` — the slot you
 pass to `AppointmentService.create` simply carries the custom `from`/`to` span and
 (for lessons) the chosen `staffMemberId`.
-
-## Seeding notes
-
-If you seed a resource-booking store, the seed layer supports it directly:
-`ProductSeedConfig` has `allowCustomDuration?` / `maxDuration?` / `maxAttendees?`
-/ `staffIds?`; single-venue businesses set `skipGeneratedLocations: true` so the
-store isn't given auto-generated city branches. Demo bookings for no-staff
-resource products are location-only appointments (staff null).

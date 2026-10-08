@@ -1,9 +1,8 @@
 # Checkout: customer, addresses, consent, payment
 
 Checkout runs on a cart (via `X-Cart-Id`) through `CheckoutService`:
-`start` → `saveCustomer` → `saveAnswers` → `submit`. Read the shipping
-templates' `app/api/checkout/*` (or storefront `actions/checkout/*`) routes for
-exact payloads before wiring payment.
+`start` → `saveCustomer` → `saveAnswers` → `submit`. Read the official
+templates' `app/api/checkout/*` routes for exact payloads before wiring payment.
 
 ## Save the customer (`saveCustomer`)
 
@@ -17,6 +16,7 @@ const { data } = await CheckoutService.saveCustomer({
   headers: { 'X-Cart-Id': cartId },
   body: {
     customer: {
+      kind: 'new',          // required discriminator: 'new' | 'existing'
       email: 'jo@example.com',
       firstName: 'Jo',
       lastName: 'Smith',
@@ -30,9 +30,11 @@ const { data } = await CheckoutService.saveCustomer({
 // data.customerId
 ```
 
-`CheckoutCustomer.customer` is either a new customer (shape above) or an existing
-one (`ExistingOrderCustomer`, referencing a customer id). Returns
-`{ customerId }`.
+`CheckoutCustomer.customer` is either a new customer (`kind: 'new'`, shape
+above) or an existing one (`kind: 'existing'`, `{ kind, customerId, … }`). The
+`kind` field is **required** on every customer object (`saveCustomer`, `start`,
+`submit`, `AppointmentService.create`); the generated types don't show it, so add
+it yourself. Without it the request fails validation. Returns `{ customerId }`.
 
 ## Billing address
 
@@ -63,8 +65,10 @@ per-channel opt-in. Set it at checkout as above, or later from the account (see
 
 Stores can require custom questions. Fetch them with
 `CheckoutService.getCartQuestions`, collect answers, then
-`CheckoutService.saveAnswers` (or pass `checkoutQuestionAnswers` at appointment
-creation). Question translations: `CheckoutQuestionService.listTranslations`.
+`CheckoutService.saveAnswers` with
+`{ answers: [{ questionId, question, answer, fileIds? }] }`: `question` is the
+question text (kept for the record) and is required, as is `answer` (a string).
+You can also pass `checkoutQuestionAnswers` at appointment creation. Question translations: `CheckoutQuestionService.listTranslations`.
 
 ## Payment / submit
 

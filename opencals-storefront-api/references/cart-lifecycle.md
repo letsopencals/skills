@@ -46,6 +46,6 @@ Create a fresh cart (`createOrGet` with no id), re-add the items, and tell the
 customer their held slot was released and to re-select — the previous slot may no
 longer be free.
 
-Reference implementations: `frontend/apps/storefront/contexts/cart-context.tsx`
-and `templates/padel-club-template/contexts/cart-context.tsx` (countdown +
-extend-on-activity + refocus handling).
+Reference implementation: `contexts/cart-context.tsx` in any of the official
+templates (e.g. `github.com/letsopencals/template-volt`): countdown +
+extend-on-activity + refocus handling.

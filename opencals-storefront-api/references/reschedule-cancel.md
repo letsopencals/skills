@@ -53,5 +53,7 @@ await AppointmentService.cancel({
 `CancelAppointment` = `{ notifyCustomer?: boolean }`. Cancellation/refund policy
 is enforced by the API; don't compute refunds client-side.
 
-Reference UI: `frontend/apps/storefront/components/account/appointments/`
-(`reschedule-appointment-modal.tsx`, `cancel-appointment-modal.tsx`).
+Reference implementation: the official templates'
+`app/api/account/appointments/[appointmentId]/{reschedule,cancel}` routes, and
+the UI in `template-frisor`'s `components/account/appointment-detail/`
+(`reschedule-modal.tsx`, `cancel-modal.tsx`).
