@@ -23,7 +23,7 @@ The SDK is `@opencals/storefront-sdk` (class-based, generated from the OpenAPI
 spec). Every identifier in this skill's reference files is copied from that SDK —
 **never invent method names, parameters or enum values.** If something you need
 isn't documented here, read the generated types in
-`node_modules/@opencals/storefront-sdk/dist` (or the source `src/client/*.gen.ts`)
+`node_modules/@opencals/storefront-sdk/dist` (or the source `src/client/*.gen.ts` in `github.com/letsopencals/storefront-sdk`)
 rather than guessing.
 
 ## When to use this skill
@@ -71,8 +71,8 @@ Full setup details, the complete service list, `X-Api-Version`, and the
 | File | Covers |
 |------|--------|
 | `references/setup.md` | `setupOpencals`, service classes, versioning header, `OpencalsApiError`, `throwOnError` |
-| `references/availability.md` | `getCurrentAvailabilities` vs `getCurrentAvailabilitiesMerged`, `duration`, `excludeAppointmentId`, slot shape, grid fan-out |
-| `references/custom-duration.md` | `allowCustomDuration` / `maxDuration`, quantity = duration-units pricing rule |
+| `references/availability.md` | `getCurrentAvailabilities` vs `getCurrentAvailabilitiesMerged`, `duration`, `excludeAppointmentId`, slot shape, grid fan-out, multi-day ranges + client-side fit |
+| `references/custom-duration.md` | `allowCustomDuration` / `maxDuration`, quantity = duration-units pricing rule, multi-day (1-day base) bookings |
 | `references/guests-attendees.md` | `numberOfAttendees`, `maxAttendees`/`attendees`, `addGuest` / `removeGuest` |
 | `references/cart-lifecycle.md` | create/get, `X-Cart-Id`, `expiresAt`, `extendExpiration`, expiry countdown |
 | `references/checkout.md` | `saveCustomer` timing, billing vs delivery address, marketing consent, checkout questions |

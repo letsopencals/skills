@@ -50,6 +50,16 @@ const { data: ranges } = await ProductService.getCurrentAvailabilitiesMerged({
 });
 ```
 
+Ranges are UTC and are **not** limited to one day: on a continuous (24/7)
+schedule a single range can run for weeks, cut only by existing bookings. Two
+ranges can touch at a 1-second seam (`23:59:59` → `00:00:00`); merge ranges
+that are within a second of each other before checking containment.
+
+`getCurrentAvailabilitiesMerged` does **not** take `excludeAppointmentId`. When
+rescheduling against ranges, add the appointment's own `[from, to]` back into the
+ranges on the client (the reschedule endpoint itself excludes the appointment
+when it validates).
+
 Endpoints:
 - `GET /storefront/products/{productId}/current-availabilities`
 - `GET /storefront/products/{productId}/current-availability-ranges`
@@ -86,3 +96,26 @@ at that time. This is the padel/volt template's strategy — see the
 
 Because fan-out multiplies requests, wrap these calls in the retry helper from
 `rate-limiting.md`.
+
+## Multi-day rentals — ranges + client-side fit
+
+For products booked by the day (base `duration: 86400`, `allowCustomDuration`,
+continuous schedule — see `custom-duration.md`), don't page through days of
+slots. Fetch the merged ranges once, **without** `duration`, and decide on the
+client whether the chosen span fits inside one range:
+
+```ts
+const { data: ranges } = await ProductService.getCurrentAvailabilitiesMerged({
+  path: { productId },
+  query: { timezone: 'Asia/Dubai', locationId },
+  throwOnError: true,
+});
+const start = Date.parse(`${slot.fromDate}T${slot.fromTime}Z`);
+const end = Date.parse(`${slot.toDate}T${slot.toTime}Z`);
+const fits = mergeRanges(ranges).some((r) => r.start <= start && r.end >= end);
+```
+
+The server re-validates the whole span on `AppointmentService.create`, so still
+handle a rejection (dates taken meanwhile) by refetching. Worked example:
+`template-noir` (`lib/rental.ts`); pattern: the `opencals-build-booking-site`
+skill's `references/rentals-multi-day.md`.

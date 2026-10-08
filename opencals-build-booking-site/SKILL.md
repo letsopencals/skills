@@ -3,12 +3,14 @@ name: opencals-build-booking-site
 description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
-  (salon, barbershop, clinic, padel/squash club) and the @opencals/storefront-sdk.
+  (salon, barbershop, clinic, padel/squash club, luxury car rental) and the
+  @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
   booking site, or says "build me a booking website". Covers picking a template,
   scaffolding, wiring services + availability + checkout, rebranding, and
-  deploying to Vercel. For the exact API/SDK call shapes, use the companion
+  deploying to Vercel. Also covers multi-day rentals booked by the day (cars,
+  equipment, villas) via template-noir. For the exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
 
@@ -60,6 +62,12 @@ template.
      (coaching). Start here for any venue that rents out interchangeable units —
      courts, lanes, rooms, bays, equipment — especially alongside classes or
      lessons. See "Resource-booking businesses" below.
+   - `template-noir` (NOIR Drive) — luxury car rental (black, cinematic, heavily
+     animated): units booked **by the day** with a range calendar, delivery vs
+     collection locations, per-day extras, a deposit at handover, plus
+     chauffeur packages with staff. Start here for anything rented for one or
+     more whole days — cars, boats, equipment, villas. See "Rentals booked by
+     the day" below.
 2. **An Opencals Storefront API key** (`sfk_...`) — from the Opencals dashboard.
    If they don't have one, direct them to create a store and a storefront key
    before deploying (the site builds without it, but won't return live data).
@@ -75,8 +83,8 @@ cd my-booking-site
 npm install
 ```
 
-Swap the repo for `template-frisor`, `template-clarity` or `template-volt` as
-appropriate. These are complete apps — services catalogue, real-time
+Swap the repo for `template-frisor`, `template-clarity`, `template-volt` or
+`template-noir` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -135,6 +143,18 @@ duration uses `allowCustomDuration`, not duration-variant products. Full details
 the three-rule decision table, and the grid data strategy are in
 `references/resource-booking.md` (and the API shapes in the
 `opencals-storefront-api` skill's `custom-duration.md` / `availability.md`).
+
+## Rentals booked by the day (cars, boats, equipment, villas)
+
+Multi-day rentals don't use time slots. Each unit is one staffless product with
+a 1-day base (`duration: 86400`, `allowCustomDuration`, `maxDuration`) on a
+**continuous 24/7 schedule** (or none). The UI reads the merged availability
+**ranges** (`getCurrentAvailabilitiesMerged`, no `duration`), checks on the
+client that pick-up → return fits inside one range, and books a slot from
+pick-up 00:00 to return 00:00 in the store timezone, converted to UTC. Handover
+windows and flight numbers travel as appointment `customAttributes`; the
+deposit is a required checkbox, held at handover. `template-noir` is the worked
+example; full pattern in `references/rentals-multi-day.md`.
 
 ## Resources
 

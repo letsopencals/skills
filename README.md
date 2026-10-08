@@ -13,7 +13,7 @@ Opencals API correctly — real method names, real argument shapes, no guessing.
 | Skill | Use it when |
 |-------|-------------|
 | **`opencals-storefront-api`** | You're writing, reviewing or debugging any code that talks to the Opencals API / `@opencals/storefront-sdk` — availability, carts, appointments, checkout, discounts, customer accounts, guests/attendees, custom durations, reschedule/cancel, rate limits. The ground-truth reference. |
-| **`opencals-build-booking-site`** | You want a whole booking website — scaffold from an official Next.js template, wire it up, rebrand, deploy. Uses the API skill for exact call shapes. |
+| **`opencals-build-booking-site`** | You want a whole booking website — scaffold from an official Next.js template (salon, barbershop, clinic, padel club, luxury car rental), wire it up, rebrand, deploy. Includes patterns for resource booking (courts, rooms) and multi-day rentals booked by the day. Uses the API skill for exact call shapes. |
 
 The primary journey: hand an agent a business idea + inspiration →
 `opencals-build-booking-site` picks a template and builds the site →
@@ -74,7 +74,7 @@ These builders don't load `SKILL.md`. Give the model the context directly:
 
 - Docs & API reference: https://opencals.com/docs
 - SDK: https://www.npmjs.com/package/@opencals/storefront-sdk
-- Templates: https://github.com/letsopencals (`template-haar`, `template-frisor`, `template-clarity`, `template-volt`)
+- Templates: https://github.com/letsopencals (`template-haar`, `template-frisor`, `template-clarity`, `template-volt`, `template-noir`)
 - Dashboard: https://app.opencals.com
 
 ## Contributing

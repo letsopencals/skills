@@ -46,3 +46,24 @@ priced lengths.
 
 Duration-scaled add-ons (e.g. equipment charged per unit of time) scale their
 quantity with the parent appointment's duration units automatically.
+
+## Multi-day bookings (base duration of one day)
+
+For rentals booked by the day (cars, equipment, villas) use a base `duration` of
+`86400` with `allowCustomDuration: true` and a `maxDuration` (e.g. 30 days).
+N days = N units = N × price.
+
+- The product needs availability across midnight: a **continuous** 24/7
+  schedule (every day 00:00–23:59:59) or no schedule. Bookings longer than 24h
+  are validated against the continuous free window, not per-day slots.
+- Don't query slots per length. Read `getCurrentAvailabilitiesMerged` **without**
+  `duration` and check on the client that the whole pick-up → return span sits
+  inside one merged range (see `availability.md`).
+- Align the slot to whole local days: pick-up 00:00 → return 00:00 in the store
+  timezone, converted to UTC. Dubai (UTC+4), 10 → 13 Nov =
+  `{ fromDate: '2026-11-09', fromTime: '20:00:00', toDate: '2026-11-12', toTime: '20:00:00' }`.
+- `durationMultiplied` add-ons are then charged per day.
+
+Full pattern (handover via `customAttributes`, deposit, delivery locations,
+rescheduling): the `opencals-build-booking-site` skill's
+`references/rentals-multi-day.md`.
