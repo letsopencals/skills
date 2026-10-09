@@ -13,6 +13,7 @@ those in the dashboard, not in code.
 | Clinic | `github.com/letsopencals/template-clarity` | Department-first, medical; passwordless login |
 | Padel/squash club | `github.com/letsopencals/template-volt` | Dark/technical; court grid + coach-led trainings |
 | Luxury car rental | `github.com/letsopencals/template-noir` | Black, cinematic, heavily animated; multi-day range booking + chauffeur packages (see `rentals-multi-day.md`) |
+| Language school | `github.com/letsopencals/template-fluently` | Colorful, playful, 3D mascots; group classes with levels, private lessons, free trial, online Join button (see `classes-and-lessons.md`) |
 
 Clone with `npx create-next-app -e <repo-url> my-site`.
 

@@ -74,7 +74,7 @@ These builders don't load `SKILL.md`. Give the model the context directly:
 
 - Docs & API reference: https://opencals.com/docs
 - SDK: https://www.npmjs.com/package/@opencals/storefront-sdk
-- Templates: https://github.com/letsopencals (`template-haar`, `template-frisor`, `template-clarity`, `template-volt`, `template-noir`)
+- Templates: https://github.com/letsopencals (`template-haar`, `template-frisor`, `template-clarity`, `template-volt`, `template-noir`, `template-fluently`)
 - Dashboard: https://app.opencals.com
 
 ## Contributing

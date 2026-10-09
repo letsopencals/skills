@@ -3,14 +3,16 @@ name: opencals-build-booking-site
 description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
-  (salon, barbershop, clinic, padel/squash club, luxury car rental) and the
+  (salon, barbershop, clinic, padel/squash club, luxury car rental, language
+  school) and the
   @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
   booking site, or says "build me a booking website". Covers picking a template,
   scaffolding, wiring services + availability + checkout, rebranding, and
   deploying to Vercel. Also covers multi-day rentals booked by the day (cars,
-  equipment, villas) via template-noir. For the exact API/SDK call shapes, use the companion
+  equipment, villas) via template-noir, and schools with group classes, levels,
+  teachers and online lessons via template-fluently. For the exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
 
@@ -68,6 +70,12 @@ template.
      chauffeur packages with staff. Start here for anything rented for one or
      more whole days — cars, boats, equipment, villas. See "Rentals booked by
      the day" below.
+   - `template-fluently` (Fluently) — language school (colorful, playful,
+     3D mascots): group classes with **level variants** and live "seats left",
+     private 1:1 lessons, a free trial, teachers as staff, campuses plus an
+     **online classroom** with a Join button. Start here for any school or
+     course business — languages, music, coding, tutoring, art. See "Schools
+     and classes" below.
 2. **An Opencals Storefront API key** (`sfk_...`) — from the Opencals dashboard.
    If they don't have one, direct them to create a store and a storefront key
    before deploying (the site builds without it, but won't return live data).
@@ -83,8 +91,8 @@ cd my-booking-site
 npm install
 ```
 
-Swap the repo for `template-frisor`, `template-clarity`, `template-volt` or
-`template-noir` as appropriate. These are complete apps — services catalogue, real-time
+Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
+`template-noir` or `template-fluently` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -155,6 +163,18 @@ pick-up 00:00 to return 00:00 in the store timezone, converted to UTC. Handover
 windows and flight numbers travel as appointment `customAttributes`; the
 deposit is a required checkbox, held at handover. `template-noir` is the worked
 example; full pattern in `references/rentals-multi-day.md`.
+
+## Schools and classes (languages, music, coding, tutoring)
+
+No special engine features: **subjects are collections**, **a class is a
+product whose variants are levels** (group, `maxAttendees > 1`) or lengths
+(private, 1 seat), a $0 1-seat product is a free trial, and **teachers are
+staff** assigned per class. The format (online vs campus group) is derived from
+the class's location types, so nothing is keyed off slugs. Live "seats left"
+comes from slot availability. The **Online location's `link`** is the classroom
+URL, returned on the booked appointment's location, which powers a "Join lesson"
+button. `template-fluently` is the worked example; full pattern in
+`references/classes-and-lessons.md`.
 
 ## Resources
 
