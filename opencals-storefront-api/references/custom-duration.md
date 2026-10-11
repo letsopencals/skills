@@ -12,7 +12,7 @@ not a client-side trick.
 
 The customer books a positive-integer **multiple** of the base unit. The backend
 prices it as `ceil(bookedSeconds / baseSeconds) × price` and validates the
-multiple.
+multiple (except for `fixedTimes` products, see below).
 
 Example: a 30-minute base at £15 → £30 for 60 minutes, £45 for 90 minutes.
 
@@ -64,6 +64,29 @@ N days = N units = N × price.
   `{ fromDate: '2026-11-09', fromTime: '20:00:00', toDate: '2026-11-12', toTime: '20:00:00' }`.
 - `durationMultiplied` add-ons are then charged per day.
 
+## Fixed check-in and check-out (`fixedTimes`)
+
+A custom-duration product can also have `fixedTimes: true` with
+`fixedStartTime` and `fixedEndTime` (`HH:MM:SS`), e.g. a villa with check-in
+`15:00:00` and check-out `11:00:00`.
+
+- The slot must start at `fixedStartTime` on the first day and end at
+  `fixedEndTime` on the last day, **local to the product's schedule timezone**
+  (the store timezone if the product has no schedule), sent in UTC.
+  Bali (UTC+8), check-in 14 Nov, check-out 17 Nov =
+  `{ fromDate: '2026-11-14', fromTime: '07:00:00', toDate: '2026-11-17', toTime: '03:00:00' }`.
+- **Enforced server-side** (since October 2026) on `POST /storefront/appointments`
+  (with or without a cart) and on customer reschedules
+  (`PUT /storefront/appointments/{appointmentId}/reschedule`). Any other times
+  return `400` with "This product must be booked from 15:00 to 11:00
+  (Asia/Makassar time)". Merchant bookings and reschedules are exempt.
+- Such a stay isn't a whole multiple of the base (3 nights from 15:00 to 11:00 is
+  68 h), so the multiple-of-base check is skipped for these products; only
+  `maxDuration` applies. Pricing still rounds up: `ceil(68h / 24h)` = 3 × price.
+- Read `getCurrentAvailabilitiesMerged` without `duration` and check that
+  check-in → check-out fits inside one merged range. A check-out day can be the
+  next guest's check-in day.
+
 Full pattern (handover via `customAttributes`, deposit, delivery locations,
-rescheduling): the `opencals-build-booking-site` skill's
+rescheduling, nightly stays): the `opencals-build-booking-site` skill's
 `references/rentals-multi-day.md`.

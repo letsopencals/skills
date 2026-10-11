@@ -5,6 +5,11 @@ on the Opencals API. The NOIR Drive car-rental template (`template-noir`) is the
 worked example: twelve cars booked by the day with delivery, per-day extras and
 a deposit at handover, plus chauffeur packages over one store.
 
+Villas, cabins and rooms booked **by the night**, with fixed check-in and
+check-out times, follow the same model with one change to the slot: see §11.
+The Bali Villa Rentals template (`template-bali-villas`) is the worked example
+for that.
+
 For exact SDK shapes see the `opencals-storefront-api` skill:
 `custom-duration.md`, `availability.md`, `guests-attendees.md`, `checkout.md`.
 For the conflict rules (Self / Product Pool / Staff) see `resource-booking.md`.
@@ -190,14 +195,73 @@ attribute (`preferred_car`): that does **not** block the car's own availability.
 If the car must be blocked too, book the car product as a second appointment in
 the same cart.
 
+## 11. Nightly stays: fixed check-in and check-out
+
+For villas, cabins, guest houses and rooms, keep everything above (one product
+per unit, 1-day base, `allowCustomDuration`, continuous schedule, its own
+product pool, ranges without `duration`) and add fixed times:
+
+| Field | Value |
+|---|---|
+| `fixedTimes` | `true` |
+| `fixedStartTime` | check-in, e.g. `"15:00:00"` |
+| `fixedEndTime` | check-out, e.g. `"11:00:00"` |
+
+**The slot runs check-in date at `fixedStartTime` → check-out date at
+`fixedEndTime`**, local to the product's schedule timezone (the store timezone
+if it has no schedule), sent in UTC. Not 00:00 → 00:00 as in §4.
+
+```ts
+// lib/stay.ts in template-bali-villas (Asia/Makassar, UTC+8)
+const times = stayTimesFor(product); // { checkIn: '15:00', checkOut: '11:00' } from fixedStartTime/fixedEndTime
+toStaySlot('2026-11-14', '2026-11-17', 'Asia/Makassar', times);
+// { fromDate: '2026-11-14', fromTime: '07:00:00', toDate: '2026-11-17', toTime: '03:00:00' }  → 3 nights
+```
+
+- **The server enforces it.** Since October 2026, a customer booking
+  (`POST /storefront/appointments`, with or without a cart) or a customer
+  reschedule whose slot doesn't start at `fixedStartTime` and end at
+  `fixedEndTime` in that timezone is rejected with `400`: "This product must be
+  booked from 15:00 to 11:00 (Asia/Makassar time)". Build the slot on your
+  server from the product's own fixed times (`stayTimesFor`), never from
+  client-sent times. Merchant bookings in the dashboard are exempt, which is how
+  an early check-in or a late check-out gets applied.
+- **Pricing rounds up.** An N-night stay is `(N−1)·24h + 20h`, not a multiple of
+  the base, so the "whole multiple of `duration`" check is skipped for these
+  products (only `maxDuration` applies) and the API prices `ceil(booked / 86400)`
+  = N nights. Show `nights × price` as a preview only; the cart total is the
+  source of truth.
+- **Night availability.** A night on date D is free if D at check-in → D+1 at
+  check-out fits inside one merged range (`isNightAvailable`). A stay fits if
+  check-in → check-out fits inside one range (`fitsStay`). `latestCheckout`
+  caps the check-out date at the next booking (and at the longest stay).
+- **Turnover days.** Because a night only blocks check-in → next day's
+  check-out, a check-out day can be the next guest's check-in day (out at 11:00,
+  in at 15:00). Don't mark the check-out day as booked in the calendar.
+- **Minimum nights** aren't a product field. Keep them in site content (the
+  template has `minNights` per villa in `lib/villa-content.ts`) and enforce
+  them in the calendar.
+- **Guest details** go in `customAttributes`, not the slot. Lumbung Sidemen's
+  keys: `adults`, `children`, `infants`, `arrival_time`, `flight_number`,
+  `occasion`.
+- **Extras** like an airport transfer, a floating breakfast or an "early
+  check-in request" are add-ons with `durationMultiplied` **off** (charged once
+  per stay).
+- **Changing dates.** Keep the same number of nights (the backend doesn't
+  reprice an order on reschedule), add the stay's own interval back into the
+  ranges as in §9, and rebuild the slot with the same fixed times.
+- Set `cancelGap` (14 days in the demo) and quote the cutoff from it so the copy
+  and the API agree.
+
 ## Checklist
 
 - [ ] Each unit is its own product: `duration: 86400`, `allowCustomDuration`, `maxDuration`, no staff, `maxAttendees: 1`
 - [ ] Continuous 24/7 schedule (or none)
 - [ ] UI reads `getCurrentAvailabilitiesMerged` without `duration` and fits the span client-side
-- [ ] Slot = pick-up 00:00 → return 00:00 in the store timezone, converted to UTC
+- [ ] Slot = pick-up 00:00 → return 00:00 in the store timezone, converted to UTC (day rentals), or check-in date at `fixedStartTime` → check-out date at `fixedEndTime` in the schedule timezone (nightly stays with `fixedTimes`; enforced server-side, `400` otherwise)
 - [ ] Handover window, return window, flight and collection address as `customAttributes`
 - [ ] PHYSICAL + DELIVERY locations; address passed for delivery
 - [ ] Deposit as a required checkbox question, never charged online
 - [ ] Per-day extras use `durationMultiplied`
 - [ ] Reschedule keeps the day count and unions the booking's own interval into the ranges
+- [ ] Nightly stays: turnover day bookable, minimum nights in site content, guest counts as `customAttributes`

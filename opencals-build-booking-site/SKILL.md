@@ -4,15 +4,17 @@ description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
   (salon, barbershop, clinic, padel/squash club, luxury car rental, language
-  school) and the
+  school, villa rental) and the
   @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
   booking site, or says "build me a booking website". Covers picking a template,
   scaffolding, wiring services + availability + checkout, rebranding, and
   deploying to Vercel. Also covers multi-day rentals booked by the day (cars,
-  equipment, villas) via template-noir, and schools with group classes, levels,
-  teachers and online lessons via template-fluently. For the exact API/SDK call shapes, use the companion
+  equipment) via template-noir, nightly stays with fixed check-in/check-out
+  (villas, cabins, rooms) via template-bali-villas, and schools with group
+  classes, levels, teachers and online lessons via template-fluently. For the
+  exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
 
@@ -68,8 +70,14 @@ template.
      animated): units booked **by the day** with a range calendar, delivery vs
      collection locations, per-day extras, a deposit at handover, plus
      chauffeur packages with staff. Start here for anything rented for one or
-     more whole days — cars, boats, equipment, villas. See "Rentals booked by
-     the day" below.
+     more whole days — cars, boats, equipment. See "Rentals booked by the day"
+     below.
+   - `template-bali-villas` (Bali Villa Rentals, demo brand Lumbung Sidemen) —
+     villa rental (warm, quiet, rice-field photography): villas booked **by the
+     night** from check-in 15:00 to check-out 11:00, a calendar on live
+     availability with turnover days, guest counts and arrival details, per-stay
+     extras, change dates or cancel from the account. Start here for villas,
+     cabins, guest houses or rooms. See "Nightly stays" below.
    - `template-fluently` (Fluently) — language school (colorful, playful,
      3D mascots): group classes with **level variants** and live "seats left",
      private 1:1 lessons, a free trial, teachers as staff, campuses plus an
@@ -92,7 +100,7 @@ npm install
 ```
 
 Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
-`template-noir` or `template-fluently` as appropriate. These are complete apps — services catalogue, real-time
+`template-noir`, `template-bali-villas` or `template-fluently` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -163,6 +171,19 @@ pick-up 00:00 to return 00:00 in the store timezone, converted to UTC. Handover
 windows and flight numbers travel as appointment `customAttributes`; the
 deposit is a required checkbox, held at handover. `template-noir` is the worked
 example; full pattern in `references/rentals-multi-day.md`.
+
+## Nightly stays (villas, cabins, guest houses, rooms)
+
+Same model as day rentals, plus `fixedTimes` with `fixedStartTime` (check-in,
+e.g. 15:00) and `fixedEndTime` (check-out, e.g. 11:00). The slot runs from the
+check-in date at `fixedStartTime` to the check-out date at `fixedEndTime` in the
+schedule timezone, converted to UTC; build it server-side from the product's own
+fixed times. The API **enforces** this for customer bookings and reschedules
+(`400` otherwise; merchant bookings are exempt) and prices `ceil(booked / base)`,
+so N nights = N × price. A check-out day can be the next check-in day. Minimum
+nights live in site content, and guest counts, arrival time and flight number go
+in `customAttributes`. `template-bali-villas` is the worked example; full
+pattern in `references/rentals-multi-day.md` §11.
 
 ## Schools and classes (languages, music, coding, tutoring)
 

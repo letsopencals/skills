@@ -117,5 +117,7 @@ const fits = mergeRanges(ranges).some((r) => r.start <= start && r.end >= end);
 
 The server re-validates the whole span on `AppointmentService.create`, so still
 handle a rejection (dates taken meanwhile) by refetching. Worked example:
-`template-noir` (`lib/rental.ts`); pattern: the `opencals-build-booking-site`
-skill's `references/rentals-multi-day.md`.
+`template-noir` (`lib/rental.ts`); for nightly stays with fixed check-in and
+check-out (slot = check-in date at `fixedStartTime` → check-out date at
+`fixedEndTime`), `template-bali-villas` (`lib/stay.ts`). Pattern: the
+`opencals-build-booking-site` skill's `references/rentals-multi-day.md`.
