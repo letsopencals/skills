@@ -28,7 +28,7 @@ const { data: appointment } = await AppointmentService.create({
 ```
 
 `CreateAppointment` body fields (all besides `slot` optional): `customer`,
-`internalNote`, `address` (DELIVERY-location service address), `checkoutQuestionAnswers`,
+`address` (DELIVERY-location service address), `checkoutQuestionAnswers`,
 `numberOfAttendees`, `cartId`, `addOns`, `guests`, `customAttributes` (string→string map, ≤250 entries).
 
 ## Group capacity
