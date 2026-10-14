@@ -10,7 +10,7 @@ those in the dashboard, not in code.
 |----------|------|------|
 | Salon | `github.com/letsopencals/template-haar` | Warm, editorial; services + gallery |
 | Barbershop | `github.com/letsopencals/template-frisor` | Dark, editorial |
-| Clinic | `github.com/letsopencals/template-clarity` | Department-first, medical; passwordless login |
+| Clinic | `github.com/letsopencals/template-clarity` | Calm, warm; need-first Care Finder, one-page booking composer with per-visit intake (checkout questions by `internalName`) and photo uploads, clinic or video visits, family care record; passwordless login |
 | Padel/squash club | `github.com/letsopencals/template-volt` | Dark/technical; court grid + coach-led trainings |
 | Luxury car rental | `github.com/letsopencals/template-noir` | Black, cinematic, heavily animated; multi-day range booking + chauffeur packages (see `rentals-multi-day.md`) |
 | Villa rental | `github.com/letsopencals/template-bali-villas` | Warm, quiet, rice-field photography; nightly stays with fixed check-in/check-out, turnover days, guest details (see `rentals-multi-day.md` §11) |

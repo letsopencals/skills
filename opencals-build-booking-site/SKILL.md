@@ -60,7 +60,9 @@ template.
 1. **What kind of business** — pick the closest starting template:
    - `template-haar` — salon (services + gallery, warm/editorial)
    - `template-frisor` — barbershop (dark, editorial)
-   - `template-clarity` — clinic (department-first, medical; passwordless login)
+   - `template-clarity` — clinic (calm, warm; need-first Care Finder, one-page
+     booking composer with per-visit intake and photo uploads, clinic or video
+     visits, family care record; passwordless login)
    - `template-volt` (a.k.a. padel template) — padel & squash club (dark/technical):
      a **hybrid** of bookable resources (courts) and staff-led sessions
      (coaching). Start here for any venue that rents out interchangeable units —
