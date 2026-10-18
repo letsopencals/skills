@@ -72,9 +72,11 @@ or, if it has none, against the billing already saved on the cart. Once
 `submit`.
 
 For the untrusted existing-customer case above, the billing and delivery
-addresses entered are kept on that booking only (order and invoice use them)
-and aren't added to the customer's saved addresses. Their `customerId` is
-`null` (e.g. `cart.billingAddress.customerId`), so type it as nullable.
+addresses entered are linked to that booking (order and invoice use them) with
+`customerId: null` (e.g. `cart.billingAddress.customerId`), so type it as
+nullable. `saveCustomer`/`start` never write them to the customer's account;
+once `submit` places the order they are also added to the customer's saved
+addresses.
 
 ## Delivery address
 
