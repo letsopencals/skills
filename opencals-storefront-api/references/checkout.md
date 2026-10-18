@@ -36,6 +36,25 @@ above) or an existing one (`kind: 'existing'`, `{ kind, customerId, … }`). The
 `submit`, `AppointmentService.create`); the generated types don't show it, so add
 it yourself. Without it the request fails validation. Returns `{ customerId }`.
 
+### Existing customers when the request isn't signed in
+
+An email or `customerId` in the body is a claim, not proof (API keys are
+public). The customer is only treated as the caller when the request carries
+that customer's bearer token, or when this cart's checkout created them. If a
+guest enters the email of an **existing** customer without signing in:
+
+- the booking is still attached to that customer (it shows in their account
+  once they sign in, e.g. with a login code);
+- nothing on their profile is overwritten (name, phone, billing, consent);
+- `saveCustomer` returns `{}` with **no** `customerId`, and cart responses
+  show `customer` / `customerId` as `null`. Don't rely on getting an id back:
+  send the same `kind: 'new'` details again in later steps, or leave `customer`
+  out (the cart already holds it);
+- `submit` returns no `auth` / `customer`.
+
+A `customerId` that isn't the signed-in customer (or the one this cart already
+uses) is ignored: send an `email` with it, or the request fails with 400.
+
 ## Billing address
 
 `billingAddress?: BillingAddress` — company name, tax registration id, and the
@@ -46,6 +65,16 @@ per-store checkout setting; read the store's public settings
 
 Company name and tax/VAT id live on the **billing address**, not on the customer
 record (Shopify-style).
+
+Required billing fields are checked against the `billingAddress` in the request
+or, if it has none, against the billing already saved on the cart. Once
+`saveCustomer` has saved it, you don't need to send it again at `start` or
+`submit`.
+
+For the untrusted existing-customer case above, the billing and delivery
+addresses entered are kept on that booking only (order and invoice use them)
+and aren't added to the customer's saved addresses. Their `customerId` is
+`null` (e.g. `cart.billingAddress.customerId`), so type it as nullable.
 
 ## Delivery address
 
@@ -77,5 +106,8 @@ publishable keys come from `PaymentService.getAvailableProviders` /
 `getSettings` — for Stripe the backend returns the publishable key to the
 storefront. When a total is £0 or below the payment minimum, the API may return a
 no-payment-required provider; branch on the provider in the response rather than
-assuming Stripe. Don't reimplement payment UI from scratch — reuse the template's
+assuming Stripe. The response is `{ order, auth?, customer? }`: `auth` (tokens that
+sign the customer in) is only present when the request is signed in as the
+order's customer or this checkout created the customer, so always treat it as
+optional. Don't reimplement payment UI from scratch — reuse the template's
 `components/checkout/*`.
