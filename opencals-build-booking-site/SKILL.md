@@ -63,9 +63,10 @@ template.
    - `template-clarity` — clinic (calm, warm; need-first Care Finder, one-page
      booking composer with per-visit intake and photo uploads, clinic or video
      visits, family care record; passwordless login)
-   - `template-volt` (a.k.a. padel template) — padel & squash club (dark/technical):
-     a **hybrid** of bookable resources (courts) and staff-led sessions
-     (coaching). Start here for any venue that rents out interchangeable units —
+   - `template-volt` (a.k.a. padel template) — multi-club padel & squash network
+     (dark/technical): a **hybrid** of bookable resources (courts at several
+     clubs, shown as a live hall map or a grid) and staff-led sessions
+     (coaching), with a crew-and-kit checkout and match-ticket confirmation. Start here for any venue that rents out interchangeable units —
      courts, lanes, rooms, bays, equipment — especially alongside classes or
      lessons. See "Resource-booking businesses" below.
    - `template-noir` (NOIR Drive) — luxury car rental (black, cinematic, heavily
@@ -158,7 +159,7 @@ Some venues book *things*, often many interchangeable units, sometimes alongside
 staff-led classes. The padel/volt template is the worked example. Model each with
 the conflict rule that fits — don't force everything through "staff". Custom
 duration uses `allowCustomDuration`, not duration-variant products. Full details,
-the three-rule decision table, and the grid data strategy are in
+the three-rule decision table, multi-club modelling and the per-club availability strategy are in
 `references/resource-booking.md` (and the API shapes in the
 `opencals-storefront-api` skill's `custom-duration.md` / `availability.md`).
 

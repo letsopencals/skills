@@ -2,7 +2,8 @@
 
 How to model businesses that book **things** (often many interchangeable units)
 and/or **group** sessions, on top of the Opencals API. The padel & squash club
-template (`template-volt`) is the worked example: court products (rentals) plus
+template (`template-volt`) is the worked example: four clubs (store locations),
+each with its own padel doubles, padel singles and squash courts (rentals), plus
 coach-led individual and group trainings, over one store.
 
 For the exact API/SDK shapes referenced here (custom duration, availability grid,
@@ -29,6 +30,23 @@ Group the units for display as **variants of one product group** (share
 `productGroupId`) so the catalogue shows one "Padel Court" item whose `variants`
 are the individual courts — each still a distinct `productId`/resource. Put them
 in a **collection** ("Padel Courts") to drive a sport/category toggle.
+
+### Several venues → one location per club, courts assigned to one club
+
+For a network of clubs, each club is a **store location** (with `latitude` /
+`longitude` for "Near me") and each court is assigned to exactly **one**
+location. Use one product group **per sport per club** (`Padel Court · Madrid`
+with variants `Court 1`…) so a product page never mixes cities. Collections stay
+per sport and span every club.
+
+- Collection products don't carry locations. To know which club a court belongs
+  to, read `ProductService.list` (each variant has `locations` and `collections`;
+  the sport is the collection slug), or filter with `locationId`.
+- Encode small per-unit facts in the variant title when the API has no field for
+  them: VOLT uses `Court 7 · Singles` for a singles court (narrow tile, 2
+  players); anything else is doubles.
+- Start the booking page from **one club** (the linked one, the one remembered
+  in the browser, or the nearest), never from every club at once.
 
 ### Variable duration → `allowCustomDuration`, NOT duration variants
 
@@ -62,19 +80,29 @@ group class at the same time.
 - Express levels (Beginner/Intermediate/Advanced) as variants under a per-format
   `productGroupId`, or as separate products in a "Training" collection.
 
-## Grid data strategy (units × time)
+## Availability strategy for a club (map, grid, "free from")
 
-`ProductService.getCurrentAvailabilities` returns slots for **one product**. To
-paint a Playtomic-style courts × time grid:
+`ProductService.getCurrentAvailabilities` answers for **one product and one
+date**. Fanning that out per court per day from the browser burns the rate limit
+fast. Instead, per club:
 
-1. Load the sport's court product group → its `variants` are the courts (rows).
-2. **Fan out**: one availability call per court variant for the selected date at
-   the base granularity (cache each under its own key; wrap in the rate-limit
-   retry helper — see the core skill's `rate-limiting.md`).
-3. A cell is *available* iff a base slot for that court starts at that time.
-4. On cell click, offer durations (60/90). For a longer duration, re-query that
-   court with `duration=<seconds>` (cached per court+date+duration) to confirm the
-   full block fits, then book that court product for the returned slot.
+1. On the server, call `ProductService.getCurrentAvailabilitiesMerged` **once per
+   court with no `date`**: it returns the court's free ranges for the whole
+   booking horizon. Pass `locationId` and the club timezone, `throwOnError: true`,
+   limited concurrency (2–3) and retry on 429.
+2. Cache each court's ranges briefly (VOLT: `unstable_cache`, 60 s, tags
+   `court:<id>` and `availability`), and drop the tag after a booking, cancel or
+   reschedule so the change shows at once.
+3. Return one response per club, e.g. `{ ranges: { [courtId]: [startMin, lenMin][] } }`.
+4. Compute everything on the client from those spans: a court is free for a game
+   at `t` when one span covers `[t, t + length]`; the grid cell, the hall-map
+   tile state, "free from 21:00", the free-courts-per-half-hour pulse and the
+   sold-out days on the day strip all come from the same maths. Switching day,
+   length, sport or view makes no API calls.
+
+Book the chosen span as one slot (`from`/`to` covering the game) on that court
+product; the backend re-checks it. If "any court" was picked, try the next free
+court when the first one has just gone.
 
 Booking, cart and checkout are unchanged from `booking-flow.md` — the slot you
 pass to `AppointmentService.create` simply carries the custom `from`/`to` span and
