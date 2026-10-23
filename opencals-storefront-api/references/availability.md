@@ -85,17 +85,23 @@ as `excludeAppointmentId` so the slot it currently occupies isn't reported as
 busy — otherwise the customer can't rebook their own time. Details and the full
 reschedule flow: `reschedule-cancel.md`.
 
-## Grid UIs (units × time) — fan out, don't invent a batch call
+## Grid UIs (units × time): read ranges once per unit, don't invent a batch call
 
 There is no multi-product availability endpoint. To paint a "courts × time" (or
-"rooms × time") grid, **fan out** one `getCurrentAvailabilities` call per product
-for the selected date and cache each under its own key (e.g. one SWR key per
-product+date+duration). A cell is available iff that product has a slot starting
-at that time. This is the padel/volt template's strategy — see the
-`opencals-build-booking-site` skill's `references/resource-booking.md`.
+"rooms × time") grid, **don't** fan out `getCurrentAvailabilities` per product per
+date from the browser, because switching days then multiplies requests. Instead,
+on the server, call `getCurrentAvailabilitiesMerged` **once per product with no
+`date`**. It returns that product's free ranges for the whole booking horizon. Cache
+each product's result briefly (about 60 s), invalidate it after a booking, cancel or
+reschedule, and return the ranges for one location in a single response. A cell is
+available iff one range covers `[t, t + length]`, so day, length and view changes are
+computed on the client with no further calls. This is the VOLT template's
+strategy, with one route per club. See the `opencals-build-booking-site` skill's
+`references/resource-booking.md` ("Availability strategy for a club").
 
-Because fan-out multiplies requests, wrap these calls in the retry helper from
-`rate-limiting.md`.
+Use per-date `getCurrentAvailabilities` only when you need exact slot starts for a
+single product (e.g. a staffed service). Either way, wrap fan-out calls in the
+retry helper from `rate-limiting.md` and limit concurrency to 2–3.
 
 ## Multi-day rentals — ranges + client-side fit
 
