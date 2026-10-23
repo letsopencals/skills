@@ -24,7 +24,9 @@ not the API.
 | Customer can't reschedule into their own slot | Availability not excluding the moved appointment | Pass `excludeAppointmentId` — see `reschedule-cancel.md` |
 | Bursts of 429 on a grid/calendar | Un-throttled fan-out | Wrap in `withRateLimitRetry` + cache — see `rate-limiting.md` |
 | A service/product isn't showing | Dashboard config (inactive product, no availability, wrong location) | Verify in the dashboard, not in code |
-| 401 on account calls | Missing customer bearer token | Storefront reads use the `sfk_` key; account calls also need `Authorization` — see `auth-self-service.md` |
+| 401 on account calls | Missing customer bearer token | Storefront reads use the API key; account calls also need `Authorization` — see `auth-self-service.md` |
+| 401 `This API key is secret and must only be used from a server` | A private key (`spk_`/`sk_`) was sent from browser code | Keep it in server code; use a public `sfk_` key in the browser |
+| 401 `Request IP not allowed for this API key` | The private key is restricted to server IPs | Add your server's outgoing IP to the key, or clear the list on hosts without fixed IPs |
 | Reschedule/cancel rejected | Inside `rescheduleGap` / `cancelGap` | Read the gap and disable the action when too close |
 | Discount code "works" but total unchanged | Re-deriving totals from list price | Read the cart's discounted totals; they're authoritative — see `discounts.md` |
 

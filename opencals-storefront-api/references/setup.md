@@ -8,10 +8,12 @@ import is the cleanest pattern) and import service classes anywhere afterwards.
 ```ts
 // lib/opencals.ts
 import { setupOpencals } from '@opencals/storefront-sdk';
+import { nextBuyerIp } from '@opencals/storefront-sdk/next'; // Next.js only
 
 setupOpencals({
   baseUrl: process.env.OPENCALS_API_URL ?? 'https://api.opencals.com',
-  apiKey: process.env.OPENCALS_API_KEY, // storefront key: sfk_…
+  apiKey: process.env.OPENCALS_API_KEY, // private storefront key: spk_…
+  buyerIp: nextBuyerIp, // forwards each visitor's IP on mutations (SDK 0.3.19+)
   logging: process.env.NODE_ENV === 'development',
   // throwOnError: true, // see the gotcha below
 });
@@ -23,9 +25,20 @@ import '@/lib/opencals';
 import { ProductService } from '@opencals/storefront-sdk';
 ```
 
-The API key is a **storefront** key (`sfk_…`) generated in the Opencals
-dashboard. Keep it server-side; it authorises read + booking operations for one
-store. Customer-account calls additionally need the customer's bearer token (see
+There is one key setting; the kind of key depends on where the code runs. Both
+are generated in the Opencals dashboard, are scoped to one store, and authorise
+read + booking operations:
+
+- **Server code** (the normal case for a booking site): a **private storefront
+  key** (`spk_…`). It's secret; the API rejects it with 401 when a browser sends
+  it. With `buyerIp` the API rate-limits sign-ups, logins and emails per visitor
+  instead of per server. `nextBuyerIp` reads `x-real-ip` / `x-forwarded-for`
+  (set by Vercel) and only forwards on mutations, so cached pages stay static.
+  Outside Next.js, pass your own `buyerIp: ({ method, url }) => ip`.
+- **Browser code** (widgets): a **public storefront key** (`sfk_…`) restricted to
+  your domains with allowed origins. `buyerIp` does nothing with it.
+
+Customer-account calls additionally need the customer's bearer token (see
 `auth-self-service.md`).
 
 ## Service classes (import the class, call the static method)

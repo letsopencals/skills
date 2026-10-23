@@ -43,10 +43,12 @@ classes directly:
 ```ts
 // lib/opencals.ts — imported once at the top of every server file that calls the API
 import { setupOpencals } from '@opencals/storefront-sdk';
+import { nextBuyerIp } from '@opencals/storefront-sdk/next';
 
 setupOpencals({
   baseUrl: process.env.OPENCALS_API_URL ?? 'https://api.opencals.com',
-  apiKey: process.env.OPENCALS_API_KEY, // sfk_… storefront key, from the dashboard
+  apiKey: process.env.OPENCALS_API_KEY, // spk_… private storefront key, from the dashboard
+  buyerIp: nextBuyerIp, // per-visitor rate limits (see references/setup.md)
   logging: process.env.NODE_ENV === 'development',
 });
 ```

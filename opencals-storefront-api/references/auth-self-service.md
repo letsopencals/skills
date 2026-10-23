@@ -7,7 +7,7 @@ Two layers:
   Also, `AppointmentService` / `OrderService` list-and-find return the caller's
   own records when called with the customer's bearer token.
 
-Storefront **read** and **booking** calls use the `sfk_…` API key.
+Storefront **read** and **booking** calls use the API key (`spk_…` on a server, `sfk_…` in a browser).
 **Customer-account** calls additionally require the customer's bearer token
 (from sign-in) in the `Authorization` header. In the templates this is wired via
 a `requireAuth()` helper returning `{ headers: { Authorization } }`.

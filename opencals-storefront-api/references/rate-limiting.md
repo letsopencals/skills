@@ -1,6 +1,11 @@
 # Rate limiting
 
-The API throttles per storefront key + client IP. Over the limit → **HTTP 429**,
+The API throttles per key + client IP: 50 requests/second, 300 per 10 seconds,
+1,200 per minute, plus per-email and per-IP limits on sign-up, sign-in and email
+endpoints (e.g. 3 login-code emails per address per 10 minutes). The client IP is
+the visitor IP your server forwards with a private key (`buyerIp` /
+`X-Opencals-Buyer-Ip`), else the IP the request comes from: for a server-side
+site that's your server, shared by all visitors. Over the limit → **HTTP 429**,
 surfaced as `OpencalsApiError` with `status === 429`. Bursts are the usual cause:
 fanning out one availability call per unit for a grid, or a calendar hydrating
 many products at once.
@@ -60,8 +65,13 @@ const slots = await withRateLimitRetry(
 
 ## API-key hardening (server side)
 
-Storefront keys can be configured (in the dashboard) with an **allowed-origins**
-allowlist, enforced by the API, and are throttled per key + client IP. Keep the key server-side.
-If you're behind a proxy/CDN, make sure the real client IP reaches the API
-(trust-proxy) so throttling and origin checks key off the right address, not your
-edge node.
+- Use a **private storefront key** (`spk_`) on the server and keep it secret.
+  The API rejects it when a browser sends it. It can be restricted to your
+  server's IPs (allowed origins hold IPs/CIDRs for private keys); on Vercel,
+  leave that empty.
+- Forward the visitor's IP with `buyerIp` (Next.js: `nextBuyerIp` from
+  `@opencals/storefront-sdk/next`), so throttling and abuse limits count per
+  visitor, not per server. Behind another proxy/CDN, read the header it sets
+  (e.g. `cloudfront-viewer-address`), never the request body.
+- A **public key** (`sfk_`) belongs in browser code only, restricted to your
+  domains with allowed origins; it can't forward a buyer IP.

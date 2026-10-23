@@ -97,9 +97,11 @@ template.
      waiver questions, intro and off-peak discounts, move/cancel and Join from
      the account. Start here for Pilates, yoga, barre, spin or any studio with
      a class timetable. See "Fitness and Pilates studios" below.
-2. **An Opencals Storefront API key** (`sfk_...`) — from the Opencals dashboard.
-   If they don't have one, direct them to create a store and a storefront key
-   before deploying (the site builds without it, but won't return live data).
+2. **An Opencals private storefront key** (`spk_...`) — from the Opencals
+   dashboard (Users → your user → API Keys). The templates call the API from the
+   server, so the key stays secret and each visitor gets their own rate limits.
+   If they don't have one, direct them to create a store and a private storefront
+   key before deploying (the site builds without it, but won't return live data).
 3. Node.js 20+ and a Vercel account (free tier is fine) for deployment.
 
 ## Workflow
@@ -122,7 +124,7 @@ wired. Do not rebuild them.
 Copy `.env.example` to `.env.local` and fill in:
 
 ```
-OPENCALS_API_KEY=sfk_your_key_here          # Required — the storefront key
+OPENCALS_API_KEY=spk_your_key_here          # Required — the private storefront key
 AUTH_SECRET=<random string>                 # Required — session encryption
 # OPENCALS_API_URL=https://api.opencals.com # Optional — defaults to this
 # NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...  # Optional — for payments
