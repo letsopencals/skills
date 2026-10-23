@@ -4,7 +4,7 @@ description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
   (salon, barbershop, clinic, padel/squash club, luxury car rental, language
-  school, villa rental) and the
+  school, villa rental, reformer Pilates studio) and the
   @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
@@ -13,7 +13,9 @@ description: >-
   deploying to Vercel. Also covers multi-day rentals booked by the day (cars,
   equipment) via template-noir, nightly stays with fixed check-in/check-out
   (villas, cabins, rooms) via template-bali-villas, and schools with group
-  classes, levels, teachers and online lessons via template-fluently. For the
+  classes, levels, teachers and online lessons via template-fluently, and
+  fitness studios with a multi-studio class timetable, beds left and Full
+  classes via template-reformer. For the
   exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
@@ -87,6 +89,14 @@ template.
      **online classroom** with a Join button. Start here for any school or
      course business — languages, music, coding, tutoring, art. See "Schools
      and classes" below.
+   - `template-reformer` (Tensile) — reformer Pilates studio in Berlin
+     (technical, warm; concrete, ink and spring colours): a weekly timetable
+     across three studios plus online where every class names its instructor
+     and shows **beds left**, Full classes with "next with space", a class
+     sheet that hands over to checkout, 1:1 and duet privates, dated workshops,
+     waiver questions, intro and off-peak discounts, move/cancel and Join from
+     the account. Start here for Pilates, yoga, barre, spin or any studio with
+     a class timetable. See "Fitness and Pilates studios" below.
 2. **An Opencals Storefront API key** (`sfk_...`) — from the Opencals dashboard.
    If they don't have one, direct them to create a store and a storefront key
    before deploying (the site builds without it, but won't return live data).
@@ -103,7 +113,7 @@ npm install
 ```
 
 Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
-`template-noir`, `template-bali-villas` or `template-fluently` as appropriate. These are complete apps — services catalogue, real-time
+`template-noir`, `template-bali-villas`, `template-fluently` or `template-reformer` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -199,6 +209,19 @@ comes from slot availability. The **Online location's `link`** is the classroom
 URL, returned on the booked appointment's location, which powers a "Join lesson"
 button. `template-fluently` is the worked example; full pattern in
 `references/classes-and-lessons.md`.
+
+## Fitness and Pilates studios (reformer, yoga, barre, spin)
+
+Same class model, one level deeper: **one variant per class × studio ×
+instructor** (`flow-mitte-lena`), each with its own weekly schedule, its studio
+as the only location, its instructor as the only staff member, and
+`maxAttendees` = the beds in the room. Rooms and bed plans are template
+content. **The availability API drops a slot once it's full**, so a timetable
+learns each series' weekly pattern and shows a missing week as **Full**, with a
+"next with space" link; dated workshops just disappear when full. Privates
+(1:1 and duet) are one seat each and share a product pool per studio; a duet
+is one booking with a `people: "2"` custom attribute. `template-reformer` is
+the worked example; full pattern in `references/classes-and-lessons.md` §6.
 
 ## Resources
 

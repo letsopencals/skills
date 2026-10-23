@@ -15,6 +15,7 @@ those in the dashboard, not in code.
 | Luxury car rental | `github.com/letsopencals/template-noir` | Black, cinematic, heavily animated; multi-day range booking + chauffeur packages (see `rentals-multi-day.md`) |
 | Villa rental | `github.com/letsopencals/template-bali-villas` | Warm, quiet, rice-field photography; nightly stays with fixed check-in/check-out, turnover days, guest details (see `rentals-multi-day.md` §11) |
 | Language school | `github.com/letsopencals/template-fluently` | Colorful, playful, 3D mascots; group classes with levels, private lessons, free trial, online Join button (see `classes-and-lessons.md`) |
+| Reformer Pilates / fitness studio | `github.com/letsopencals/template-reformer` | Technical, warm (concrete, ink, spring colours); multi-studio timetable with beds left and Full classes, 1:1 + duet privates, workshops, online Join (see `classes-and-lessons.md` §6) |
 
 Clone with `npx create-next-app -e <repo-url> my-site`.
 
