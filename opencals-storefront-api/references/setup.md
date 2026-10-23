@@ -30,8 +30,8 @@ are generated in the Opencals dashboard, are scoped to one store, and authorise
 read + booking operations:
 
 - **Server code** (the normal case for a booking site): a **private storefront
-  key** (`spk_…`). It's secret; the API rejects it with 401 when a browser sends
-  it. With `buyerIp` the API rate-limits sign-ups, logins and emails per visitor
+  key** (`spk_…`). It's secret: keep it in server code, never in a browser bundle
+  (the API doesn't block it there, but anyone could read it). With `buyerIp` the API rate-limits sign-ups, logins and emails per visitor
   instead of per server. `nextBuyerIp` reads `x-real-ip` / `x-forwarded-for`
   (set by Vercel) and only forwards on mutations, so cached pages stay static.
   Outside Next.js, pass your own `buyerIp: ({ method, url }) => ip`.

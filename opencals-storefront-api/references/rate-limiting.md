@@ -66,7 +66,7 @@ const slots = await withRateLimitRetry(
 ## API-key hardening (server side)
 
 - Use a **private storefront key** (`spk_`) on the server and keep it secret.
-  The API rejects it when a browser sends it. It can be restricted to your
+  Never ship it to the browser (it isn't blocked there, but it's readable). It can be restricted to your
   server's IPs (allowed origins hold IPs/CIDRs for private keys); on Vercel,
   leave that empty.
 - Forward the visitor's IP with `buyerIp` (Next.js: `nextBuyerIp` from
