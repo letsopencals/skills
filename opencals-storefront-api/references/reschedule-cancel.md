@@ -33,6 +33,30 @@ await AppointmentService.reschedule({
 
 `RescheduleAppointment` = `{ slot: AppointmentDateRangeSlot; notifyCustomer?: boolean; address?: Address }`.
 
+### Keep the length and the product
+
+A customer reschedule moves the appointment; it can't change what was bought.
+
+- The new slot must cover the **same number of billed units** as the current
+  booking (a 2-hour booking of a per-hour product stays 2 hours; a 3-night stay
+  stays 3 nights). A different length is rejected with `400` — a longer or
+  shorter booking changes the price, and only the merchant can settle that
+  (they edit the order in the dashboard).
+- `slot.productId` must be the appointment's own product; anything else is
+  ignored.
+
+For custom-duration products, don't offer a free end-time picker. Fix the
+length to the current booking's and pass it as `duration` when loading
+availability, so only same-length slots are offered:
+
+```ts
+const duration = String((new Date(appointment.to).getTime() - new Date(appointment.from).getTime()) / 1000);
+const { data: slots } = await ProductService.getCurrentAvailabilities({
+  path: { productId },
+  query: { date, timezone, duration, excludeAppointmentId: appointmentId },
+});
+```
+
 ### `excludeAppointmentId` availability note
 
 `excludeAppointmentId` is supported on `GET .../current-availabilities`. It
