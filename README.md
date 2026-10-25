@@ -1,25 +1,70 @@
 # Opencals Agent Skills
 
-AI-agent [Skills](https://code.claude.com/docs/en/skills) for building booking
-integrations on the **Opencals** hosted API. Point Claude Code, Cursor, Codex,
-Gemini CLI (or any Agent-Skills-compatible tool) at these and it will call the
-Opencals API correctly — real method names, real argument shapes, no guessing.
+[Agent Skills](https://code.claude.com/docs/en/skills) that teach AI coding tools
+to build booking websites and integrations on the **Opencals** API. Install them
+in Claude Code, Cursor, Codex, Gemini CLI or v0, and your agent calls the
+Opencals API correctly: real SDK method names, real argument shapes, no guessing.
+
+Opencals is booking software that works like an online store. Every booking is
+an order with checkout, payment, invoice and refunds attached. It handles
+appointments, classes with limited seats, rentals and overnight stays. Your
+agent builds the website; Opencals handles availability, double-booking
+prevention, pricing, tax, discounts, Stripe payments and confirmation emails.
+
+```bash
+npx skills add letsopencals/skills
+```
 
 > The skills and the official templates are MIT-licensed. The Opencals booking
-> API itself is hosted and closed-source — you pay only for bookings.
+> API is hosted (not self-hostable). Development stores are free, with every
+> feature and Stripe in test mode; you pay per booking once you go live.
 
 ## What's here
 
 | Skill | Use it when |
 |-------|-------------|
-| **`opencals-storefront-api`** | You're writing, reviewing or debugging any code that talks to the Opencals API / `@opencals/storefront-sdk` — availability, carts, appointments, checkout, discounts, customer accounts, guests/attendees, custom durations, reschedule/cancel, rate limits. The ground-truth reference. |
-| **`opencals-build-booking-site`** | You want a whole booking website — scaffold from an official Next.js template (salon, barbershop, clinic, padel club, luxury car rental), wire it up, rebrand, deploy. Includes patterns for resource booking (courts, rooms) and multi-day rentals booked by the day. Uses the API skill for exact call shapes. |
+| **`opencals-storefront-api`** | You're writing, reviewing or debugging code that talks to the Opencals API or `@opencals/storefront-sdk`: availability, carts, appointments, checkout, discounts, customer accounts, guests and attendees, custom durations, reschedule and cancel, rate limits. The ground-truth reference. |
+| **`opencals-build-booking-site`** | You want a whole booking website. It picks the closest official Next.js template, scaffolds it, wires it up, rebrands it to your inspiration and deploys it. Uses the API skill for exact call shapes. |
 
-The primary journey: hand an agent a business idea + inspiration →
-`opencals-build-booking-site` picks a template and builds the site →
-`opencals-storefront-api` supplies the exact API calls.
+The usual journey: give your agent a business idea and some inspiration
+(screenshots, a competitor's site, a brand feel). `opencals-build-booking-site`
+picks a template and builds the site; `opencals-storefront-api` supplies the
+exact API calls.
+
+### Templates the build skill starts from
+
+All MIT-licensed, Next.js, on GitHub under [letsopencals](https://github.com/letsopencals):
+
+| Template | Business | Repo |
+|----------|----------|------|
+| Haar | Hair and beauty salon | `template-haar` |
+| Frisør | Barbershop | `template-frisor` |
+| Clear Care | Medical clinic | `template-clarity` |
+| VOLT | Padel and squash club (courts plus coaching) | `template-volt` |
+| NOIR Drive | Luxury car rental (multi-day) | `template-noir` |
+| Fluently | Language school (classes and private lessons) | `template-fluently` |
+| Bali Villa Rentals | Villa and holiday rentals (nightly stays) | `template-bali-villas` |
+| Tensile | Reformer Pilates studio (classes with limited spots) | `template-reformer` |
+
+## Before you start
+
+You need an Opencals store and an API key:
+
+1. Sign up at [app.opencals.com](https://app.opencals.com) and create a free
+   **development store**. You can seed it with a sample business that matches a
+   template.
+2. In the dashboard, create a **private storefront key** (`spk_…`) for server
+   code. A public key (`sfk_…`) with allowed origins is for browser-only embeds.
 
 ## Install
+
+### skills.sh (Claude Code, Cursor, Codex, Gemini CLI and more)
+
+```bash
+npx skills add letsopencals/skills
+```
+
+Listed at [skills.sh/letsopencals/skills](https://skills.sh/letsopencals/skills).
 
 ### Claude Code (plugin marketplace)
 
@@ -30,54 +75,61 @@ The primary journey: hand an agent a business idea + inspiration →
 
 Both skills load automatically and trigger on relevant requests.
 
-### Cursor / Codex / Gemini CLI / other Agent-Skills tools
+### Manual
 
-Agent Skills are portable: a folder with a `SKILL.md`. Copy the skill folder(s)
-into your tool's skills directory. Clone this repo and copy:
+Agent Skills are portable: a folder with a `SKILL.md`. Clone the repo and copy
+the skill folders into your tool's skills directory:
 
 ```bash
 git clone https://github.com/letsopencals/skills opencals-skills
-# then copy opencals-storefront-api/ and opencals-build-booking-site/
+# copy opencals-storefront-api/ and opencals-build-booking-site/
 # into your agent's skills folder (see your tool's Agent Skills docs for the path)
 ```
 
-> The exact skills directory differs per tool and evolves quickly — check your
-> tool's current Agent Skills / rules documentation for where skill folders go.
-
-### Any agent (manual)
-
-Clone the repo and tell your agent to read the relevant `SKILL.md`:
+Or point your agent at the files directly:
 
 > Follow the skill in `opencals-storefront-api/SKILL.md` when writing Opencals
 > API code, and `opencals-build-booking-site/SKILL.md` to scaffold a site.
 
-### v0 / Lovable / Bolt (no SKILL.md support)
+## AI app builders
 
-These builders don't load `SKILL.md`. Give the model the context directly:
+Each builder has a setup guide with every field ready to copy:
 
-1. Paste this into your project's instructions / a first message:
+- **[v0](https://opencals.com/docs/ai-agents/v0)**: attach these skills from
+  skills.sh (type `/` in the composer and add `letsopencals/skills`), then set
+  `OPENCALS_API_KEY`.
+- **[Lovable](https://opencals.com/docs/ai-agents/lovable)**: a custom connector
+  plus two knowledge files.
+- **[Base44](https://opencals.com/docs/ai-agents/base44)**: one backend
+  function, an app secret and two workspace skills.
+- **Bolt, Replit and others**: paste the
+  [API reference](https://opencals.com/ai/opencals-storefront-api.md) and the
+  [booking-site playbook](https://opencals.com/ai/lovable-booking-site-playbook.md)
+  into the project instructions.
 
-   > Use the Opencals hosted booking API via `@opencals/storefront-sdk`.
-   > Initialise once with `setupOpencals({ baseUrl, apiKey })`. Services are
-   > class-based (`ProductService`, `CartService`, `AppointmentService`,
-   > `CheckoutService`, `AuthService`, `SelfService`). Flow:
-   > `getCurrentAvailabilities` → `CartService.createOrGet` (persist
-   > `X-Cart-Id`) → `AppointmentService.create` → `CheckoutService.start /
-   > saveCustomer / saveAnswers / submit`. All slot times are UTC. Never invent
-   > method names. Full reference: https://opencals.com/docs (see the AI Agents
-   > section and `llms.txt`).
+## Docs MCP server
 
-2. Point it at the machine-readable docs: **https://opencals.com/docs/llms.txt**
-   (index) and **llms-full.txt** (full content).
+The Opencals developer docs are also an MCP server, so your agent can look up
+anything the skills don't cover:
+
+```bash
+claude mcp add --transport http opencals-docs https://opencals.com/docs/mcp
+```
+
+It has two read-only tools (search the docs, read a full page) and needs no
+API key. It searches documentation only; store data and bookings go through
+the API. Setup for Cursor and other clients:
+[AI Agents overview](https://opencals.com/docs/ai-agents/overview#docs-mcp-server).
 
 ## Links
 
-- Docs & API reference: https://opencals.com/docs
+- Developer docs and API reference: https://opencals.com/docs
+- Machine-readable docs: https://opencals.com/docs/llms.txt and https://opencals.com/docs/llms-full.txt
+- Guide: [How to build a booking website with AI](https://opencals.com/blog/build-booking-website-with-ai)
 - SDK: https://www.npmjs.com/package/@opencals/storefront-sdk
-- Templates: https://github.com/letsopencals (`template-haar`, `template-frisor`, `template-clarity`, `template-volt`, `template-noir`, `template-fluently`, `template-bali-villas`, `template-reformer`)
 - Dashboard: https://app.opencals.com
 
 ## Contributing
 
 Skills are plain Markdown. Keep every method name, parameter and enum in sync
-with the generated SDK — this repo is only useful if it's ground truth.
+with the generated SDK. This repo is only useful if it's ground truth.
