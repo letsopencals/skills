@@ -45,6 +45,7 @@ All MIT-licensed, Next.js, on GitHub under [letsopencals](https://github.com/let
 | Fluently | Language school (classes and private lessons) | `template-fluently` |
 | Bali Villa Rentals | Villa and holiday rentals (nightly stays) | `template-bali-villas` |
 | Tensile | Reformer Pilates studio (classes with limited spots) | `template-reformer` |
+| Alba Dental | Dental group (five studios, many clinicians, kids site) | `template-alba` |
 
 ## Before you start
 

@@ -15,7 +15,8 @@ description: >-
   (villas, cabins, rooms) via template-bali-villas, and schools with group
   classes, levels, teachers and online lessons via template-fluently, and
   fitness studios with a multi-studio class timetable, beds left and Full
-  classes via template-reformer. For the
+  classes via template-reformer, and dental practices or clinic groups with
+  many clinicians across several studios via template-alba. For the
   exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
@@ -97,6 +98,14 @@ template.
      waiver questions, intro and off-peak discounts, move/cancel and Join from
      the account. Start here for Pilates, yoga, barre, spin or any studio with
      a class timetable. See "Fitness and Pilates studios" below.
+   - `template-alba` (Alba Dental) — dental group in London (light, precise;
+     porcelain, lagoon teal, dental-chart annotations): five studios plus video
+     consultations, 26 clinicians booked by name or **first available**, a
+     Smile Check questionnaire on a tooth chart, a chair-time booking planner
+     where the hygienist straight after is a second cart appointment,
+     per-patient pre-visit questions, a recall reminder, and Alba Kids, a
+     separate children's site. Start here for dental, physio or any clinic
+     group with many clinicians at several locations.
 2. **An Opencals private storefront key** (`spk_...`) — from the Opencals
    dashboard (Users → your user → API Keys). The templates call the API from the
    server, so the key stays secret and each visitor gets their own rate limits.
@@ -115,7 +124,7 @@ npm install
 ```
 
 Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
-`template-noir`, `template-bali-villas`, `template-fluently` or `template-reformer` as appropriate. These are complete apps — services catalogue, real-time
+`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer` or `template-alba` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 

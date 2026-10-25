@@ -16,6 +16,7 @@ those in the dashboard, not in code.
 | Villa rental | `github.com/letsopencals/template-bali-villas` | Warm, quiet, rice-field photography; nightly stays with fixed check-in/check-out, turnover days, guest details (see `rentals-multi-day.md` §11) |
 | Language school | `github.com/letsopencals/template-fluently` | Colorful, playful, 3D mascots; group classes with levels, private lessons, free trial, online Join button (see `classes-and-lessons.md`) |
 | Reformer Pilates / fitness studio | `github.com/letsopencals/template-reformer` | Technical, warm (concrete, ink, spring colours); multi-studio timetable with beds left and Full classes, 1:1 + duet privates, workshops, online Join (see `classes-and-lessons.md` §6) |
+| Dental practice / clinic group | `github.com/letsopencals/template-alba` | Light, precise (porcelain, lagoon teal, chart annotations); studios as locations, departments as collections, clinician or first-available booking from one cached availability read per studio + treatment, hygienist-after as a second cart appointment, per-patient intake by `internalName`, separate kids site |
 
 Clone with `npx create-next-app -e <repo-url> my-site`.
 
