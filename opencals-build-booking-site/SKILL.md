@@ -62,7 +62,7 @@ template.
 
 1. **What kind of business** — pick the closest starting template:
    - `template-haar` — salon (services + gallery, warm/editorial)
-   - `template-frisor` — barbershop (dark, editorial)
+   - `template-frisor` — Frisør barbershop & apothecary (3 Berlin shops, three-step booking with the total always in view, retail `shelf-` add-ons sold with the booking; dataset `frisor`)
    - `template-clarity` — clinic (calm, warm; need-first Care Finder, one-page
      booking composer with per-visit intake and photo uploads, clinic or video
      visits, family care record; passwordless login)

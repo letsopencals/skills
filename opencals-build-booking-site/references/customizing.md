@@ -9,7 +9,7 @@ those in the dashboard, not in code.
 | Template | Repo | Feel |
 |----------|------|------|
 | Salon | `github.com/letsopencals/template-haar` | Warm, editorial; services + gallery |
-| Barbershop | `github.com/letsopencals/template-frisor` | Dark, editorial |
+| Barbershop | `github.com/letsopencals/template-frisor` | Paper, bottle green and brass; three-step booking; retail as `shelf-` add-ons picked up at the chair |
 | Clinic | `github.com/letsopencals/template-clarity` | Calm, warm; need-first Care Finder, one-page booking composer with per-visit intake (checkout questions by `internalName`) and photo uploads, clinic or video visits, family care record; passwordless login |
 | Padel/squash club | `github.com/letsopencals/template-volt` | Dark/technical; multi-club, hall map + court grid per club, coach-led trainings |
 | Luxury car rental | `github.com/letsopencals/template-noir` | Black, cinematic, heavily animated; multi-day range booking + chauffeur packages (see `rentals-multi-day.md`) |
