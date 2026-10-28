@@ -148,10 +148,9 @@ Copy `.env.example` to `.env.local` and fill in:
 OPENCALS_API_KEY=spk_your_key_here          # Required — the private storefront key
 AUTH_SECRET=<random string>                 # Required — session encryption
 # OPENCALS_API_URL=https://api.opencals.com # Optional — defaults to this
-# NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_...  # Optional — for payments
 ```
 
-Generate `AUTH_SECRET` with `openssl rand -base64 32`.
+Generate `AUTH_SECRET` with `openssl rand -base64 32`. There is no Stripe env var: checkout start returns the `publishableKey` (matching the store's test/live mode) with the `clientSecret` and `stripeAccountId`.
 
 ### 3. Understand the SDK wiring (do not reinvent it)
 
