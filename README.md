@@ -46,6 +46,7 @@ All MIT-licensed, Next.js, on GitHub under [letsopencals](https://github.com/let
 | Bali Villa Rentals | Villa and holiday rentals (nightly stays) | `template-bali-villas` |
 | Tensile | Reformer Pilates studio (classes with limited spots) | `template-reformer` |
 | Alba Dental | Dental group (five studios, many clinicians, kids site) | `template-alba` |
+| Gable | Coworking (desks, meeting rooms, booths and studios at six houses) | `template-gable` |
 
 ## Before you start
 

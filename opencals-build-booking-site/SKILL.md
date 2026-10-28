@@ -4,7 +4,7 @@ description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
   (salon, barbershop, clinic, padel/squash club, luxury car rental, language
-  school, villa rental, reformer Pilates studio) and the
+  school, villa rental, reformer Pilates studio, dental group, coworking) and the
   @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
@@ -16,7 +16,9 @@ description: >-
   classes, levels, teachers and online lessons via template-fluently, and
   fitness studios with a multi-studio class timetable, beds left and Full
   classes via template-reformer, and dental practices or clinic groups with
-  many clinicians across several studios via template-alba. For the
+  many clinicians across several studios via template-alba, and coworking
+  networks (desks, meeting rooms, booths, studios at several buildings) via
+  template-gable. For the
   exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
@@ -106,6 +108,16 @@ template.
      per-patient pre-visit questions, a recall reminder, and Alba Kids, a
      separate children's site. Start here for dental, physio or any clinic
      group with many clinicians at several locations.
+   - `template-gable` (Gable) — coworking network in Dublin, Cork and Galway
+     (drawing-set look; cobalt, marigold, hatched busy time): six houses with
+     flex desks booked **by the seat** (one capacity product per house), studio
+     desks, meeting rooms, phone booths, studios, event spaces and day offices,
+     all staffless units with custom duration; a search-style planner with one
+     cached availability read per house, a **day sheet** cart that puts a desk,
+     a room and a booth on one checkout and suggests extras in the gaps,
+     meeting invitees as guests, and a Week plan account. Start here for
+     coworking, meeting-room hire, studios or any venue renting rooms by the
+     half hour at several sites. See "Resource-booking businesses" below.
 2. **An Opencals private storefront key** (`spk_...`) — from the Opencals
    dashboard (Users → your user → API Keys). The templates call the API from the
    server, so the key stays secret and each visitor gets their own rate limits.
@@ -124,7 +136,7 @@ npm install
 ```
 
 Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
-`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer` or `template-alba` as appropriate. These are complete apps — services catalogue, real-time
+`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer`, `template-alba` or `template-gable` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -177,7 +189,9 @@ Free tier is fine for launch; the user pays Opencals only for bookings.
 ## Resource-booking businesses (courts, lanes, rooms, equipment)
 
 Some venues book *things*, often many interchangeable units, sometimes alongside
-staff-led classes. The padel/volt template is the worked example. Model each with
+staff-led classes. The padel/volt template is the worked example; `template-gable`
+applies the same model to coworking (rooms, booths and desks at six buildings,
+plus a flex floor sold by the seat through `maxAttendees`). Model each with
 the conflict rule that fits — don't force everything through "staff". Custom
 duration uses `allowCustomDuration`, not duration-variant products. Full details,
 the three-rule decision table, multi-club modelling and the per-club availability strategy are in

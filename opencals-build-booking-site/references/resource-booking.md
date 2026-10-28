@@ -67,6 +67,20 @@ as `ceil(bookedSeconds / baseSeconds) × price` and validates the multiple. So a
 > (one resource) while still offering multiple priced durations. (A per-court
 > ProductPool also works but is unnecessary given native custom duration.)
 
+### Shared floors sold by the seat → one capacity product per location
+
+A coworking flex floor, a hot-desk area or an open studio has many identical
+seats nobody picks individually. Model it as **one staffless product per
+location with `maxAttendees` = the seats**, and book several seats with
+`numberOfAttendees`. No staff and no pool, so the Self rule counts seats per
+product and location; the slot stays open until the seats are taken.
+
+Rooms in the same building stay one product each (`maxAttendees: 1`). For a
+meeting room, `allowGuests` + `maxGuests` = seats − 1 lets the booker invite
+the attendees (they get the calendar invite). `template-gable` is the worked
+example: six houses, a flex floor per house, studio desks, rooms, booths and
+studios, one product group per kind per house.
+
 ### Staff-led classes & lessons → Staff rule (+ group capacity)
 
 Lessons and classes are ordinary products **assigned to coach staff** (`staffIds`).
@@ -99,6 +113,14 @@ fast. Instead, per club:
    tile state, "free from 21:00", the free-courts-per-half-hour pulse and the
    sold-out days on the day strip all come from the same maths. Switching day,
    length, sport or view makes no API calls.
+
+The same route works for capacity products. Each merged range also carries
+`attendees` and `maxAttendees`: adjacent segments that aren't full are merged and
+`attendees` is the **peak** over the merged span, while full segments are left
+out. So `maxAttendees − attendees` is a safe "seats left" for any window inside
+the range (it may undercount, never overcount). Gable packs
+`[startMin, lenMin, attendees, maxAttendees]` and returns one response per
+**house** for every room, booth, desk and flex floor in it.
 
 Book the chosen span as one slot (`from`/`to` covering the game) on that court
 product; the backend re-checks it. If "any court" was picked, try the next free
