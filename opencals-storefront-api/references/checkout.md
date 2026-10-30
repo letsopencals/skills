@@ -113,3 +113,72 @@ sign the customer in) is only present when the request is signed in as the
 order's customer or this checkout created the customer, so always treat it as
 optional. Don't reimplement payment UI from scratch — reuse the template's
 `components/checkout/*`.
+
+`appointmentsSettings.markAsScheduled` on `submit` is still accepted but no
+longer decides whether the booking is confirmed; the store's confirmation
+policy does (below).
+
+## Booking status after submit
+
+The store's `appointmentConfirmationPolicy` (`'automatic' | 'on_payment' |
+'manual'`, on `StoreService.getStorePublicSettings` → `settings`) decides when a
+booking is confirmed. Each appointment comes back either `status: 'scheduled'`
+(confirmed) or `status: 'pending'` with a `pendingReason`:
+
+- `'awaiting_payment'`: the store confirms once paid (bank transfer, cash or
+  invoice not yet paid, or a failed card payment).
+- `'awaiting_approval'`: the merchant still has to approve it.
+
+Never show a pending booking as confirmed. Label it **"Awaiting payment"** /
+**"Awaiting confirmation"**, and on the thank-you page say the booking was
+**received**, not confirmed. Branch on `pendingReason`, not on the policy.
+
+Deadlines live on the order: `paymentDueAt` (unpaid orders are cancelled after
+it) and `approvalDueAt` (unapproved bookings are cancelled after it); both are
+null when no deadline applies. A cancelled order has `cancelledAt` and
+`cancelReason` (`OrderCancelReason`: `unpaid`, `not_approved`, `declined`,
+`external`, `customer`), and `paymentStatus: 'voided'` when nothing was paid
+(nothing is due). Its appointments are `status: 'canceled'` with a
+`cancelReason` (`unpaid`, `not_approved`, `declined`, `order_cancelled`).
+
+A `pending` appointment **without an order** (`orderLineItem` is null) is a
+cart hold, not a booking: it expires with the cart (15 minutes by default).
+Don't list it in the account (`status === 'pending' && !orderLineItem` → skip).
+
+Orders no longer carry `logs` (merchant-only since SDK 0.3.20); drop any read
+of `order.logs`.
+
+## Manual payment: `paymentInstructions`
+
+Manual providers (`bank_transfer`, `cash`, `stripe_invoice` — "Pay by invoice")
+create the order without taking money. When something is still due, `submit`
+also returns `paymentInstructions` (also on an idempotent re-submit):
+
+```ts
+const { data } = await CheckoutService.submit({ headers: { 'X-Cart-Id': cartId }, body });
+const pi = data.paymentInstructions; // { provider, hostedInvoiceUrl?, dueAt?, bankDetails? } | undefined
+```
+
+Render it on the thank-you page:
+
+- `stripe_invoice`: a **"Pay invoice"** link to `hostedInvoiceUrl`, only if it
+  starts with `https://` (it can be null while the invoice is being issued).
+- `bank_transfer`: `bankDetails` (`accountName`, `bankName`, `iban`, `swift`;
+  each nullable).
+- `cash`: a "pay in person" note.
+- `dueAt`, when set: "Pay by …" in the customer's timezone. After it, the
+  unpaid order is cancelled.
+
+It's absent for card payments and paid orders.
+
+## Checkout conflicts (409)
+
+`start` and `submit` reject a cart that can't be checked out with **409** and an
+error `code` (`OpencalsApiError.code`):
+
+- `CART_EXPIRED`: the cart expired and its holds were released. Start a new
+  cart and ask the customer to re-pick (see `cart-lifecycle.md`).
+- `CART_ALREADY_CHECKED_OUT` (`start` only): the cart is already an order; the
+  error body carries its `orderId`. Send the customer to that order's
+  confirmation instead of checking out again. A repeated `submit` for such a
+  cart returns that order.

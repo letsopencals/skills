@@ -41,10 +41,17 @@ const { data: cart } = await CartService.extendExpiration({
 
 ## When the cart has expired
 
+Checkout `start` / `submit` on an expired cart fail with **409**
+`code: 'CART_EXPIRED'`; `start` on a cart that already became an order fails
+with `code: 'CART_ALREADY_CHECKED_OUT'` and an `orderId` (see `checkout.md`).
+
 If a call fails because the cart expired, don't silently retry the same id.
 Create a fresh cart (`createOrGet` with no id), re-add the items, and tell the
 customer their held slot was released and to re-select — the previous slot may no
 longer be free.
+
+Appointments in a cart are `status: 'pending'` with no order: they're holds,
+not bookings, and are released when the cart expires (15 minutes by default).
 
 Reference implementation: `contexts/cart-context.tsx` in any of the official
 templates (e.g. `github.com/letsopencals/template-volt`): countdown +

@@ -260,5 +260,8 @@ the worked example; full pattern in `references/classes-and-lessons.md` §6.
   from the API.
 - Never invent SDK method names. Use the `opencals-storefront-api` skill or the
   template's existing `app/api/` routes.
+- Never show a `pending` booking as confirmed. Stores can require payment or
+  approval first: label it from `pendingReason` and say "received" on the
+  thank-you page (`references/booking-flow.md`).
 - The frontend is MIT-licensed: it's fine to strip all Opencals branding from
   the UI. The API itself is not open source and is not part of what you ship.

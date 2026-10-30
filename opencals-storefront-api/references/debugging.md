@@ -20,6 +20,9 @@ not the API.
 | Version / "unsupported version" error on raw calls | Missing `X-Api-Version` | The SDK sends `X-Api-Version: 1`; add it manually on non-SDK calls |
 | Cart calls 404 / act on the wrong cart | `X-Cart-Id` not sent or stale | Persist `cart.id`, send it on every cart/checkout call; recreate on expiry — see `cart-lifecycle.md` |
 | Checkout fails after a while | Cart expired, slots released | Countdown + `extendExpiration` on activity; recreate cart + re-select on expiry |
+| 409 `CART_EXPIRED` / `CART_ALREADY_CHECKED_OUT` at checkout | Cart expired, or already became an order (body has `orderId`) | Start a new cart; or show the existing order — see `checkout.md` |
+| Unpaid / unapproved bookings shown as "Confirmed" | Ignoring `status: 'pending'` + `pendingReason` | Label "Awaiting payment" / "Awaiting confirmation"; thank-you says "received" — see `checkout.md` |
+| Account lists bookings the customer never placed | Cart holds (pending, no order) listed | Skip `status === 'pending' && !orderLineItem` |
 | Slots show at the wrong hour | Treating UTC slot times as local | All slot times are UTC; pass `timezone` on availability, convert for display only |
 | Customer can't reschedule into their own slot | Availability not excluding the moved appointment | Pass `excludeAppointmentId` — see `reschedule-cancel.md` |
 | Bursts of 429 on a grid/calendar | Un-throttled fan-out | Wrap in `withRateLimitRetry` + cache — see `rate-limiting.md` |
