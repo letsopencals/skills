@@ -21,8 +21,8 @@ Cart operations all take the `X-Cart-Id` header: `addItem`, `removeItem`,
 
 ## Expiry
 
-The cart carries an `expiresAt` timestamp (roughly a few minutes out; the backend
-owns the exact window). Two responsibilities on the client:
+The cart carries an `expiresAt` timestamp (the store's hold window, 15 minutes
+by default; the backend owns the exact value). Two responsibilities on the client:
 
 1. **Show a countdown.** Compute remaining time from `expiresAt` and warn the
    customer as it runs low. Recompute on tab refocus (a backgrounded tab's timer
@@ -41,9 +41,12 @@ const { data: cart } = await CartService.extendExpiration({
 
 ## When the cart has expired
 
-Checkout `start` / `submit` on an expired cart fail with **409**
-`code: 'CART_EXPIRED'`; `start` on a cart that already became an order fails
-with `code: 'CART_ALREADY_CHECKED_OUT'` and an `orderId` (see `checkout.md`).
+Checkout `start` on an expired cart fails with **409** `code: 'CART_EXPIRED'`.
+`submit` revives an expired cart instead (re-holds each slot that is still free)
+and only fails with `CART_EXPIRED` when a slot was taken meanwhile. `start` on a
+cart that already became an order fails with `code: 'CART_ALREADY_CHECKED_OUT'`
+and an `orderId`; a `submit` racing another submit of the same cart gets
+`CHECKOUT_IN_PROGRESS` (see `checkout.md`).
 
 If a call fails because the cart expired, don't silently retry the same id.
 Create a fresh cart (`createOrGet` with no id), re-add the items, and tell the
@@ -51,7 +54,9 @@ customer their held slot was released and to re-select — the previous slot may
 longer be free.
 
 Appointments in a cart are `status: 'pending'` with no order: they're holds,
-not bookings, and are released when the cart expires (15 minutes by default).
+not bookings, and are released when the cart expires. Every store has a hold
+window (15 minutes by default, set by the merchant); `extendExpiration` and
+checkout `start` only ever push `expiresAt` later, never shorten it.
 
 Reference implementation: `contexts/cart-context.tsx` in any of the official
 templates (e.g. `github.com/letsopencals/template-volt`): countdown +

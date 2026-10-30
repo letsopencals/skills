@@ -176,9 +176,17 @@ It's absent for card payments and paid orders.
 `start` and `submit` reject a cart that can't be checked out with **409** and an
 error `code` (`OpencalsApiError.code`):
 
-- `CART_EXPIRED`: the cart expired and its holds were released. Start a new
-  cart and ask the customer to re-pick (see `cart-lifecycle.md`).
+- `CART_EXPIRED`: a held time is gone. `submit` first revives an expired cart
+  (it re-holds each slot that is still free and carries on, so a customer who
+  paid just after the countdown still gets the booking); only when a slot was
+  taken meanwhile is it a 409, and an uncaptured card payment is released.
+  `start` on an expired cart answers 409 straight away. Start a new cart and ask
+  the customer to re-pick (see `cart-lifecycle.md`).
 - `CART_ALREADY_CHECKED_OUT` (`start` only): the cart is already an order; the
   error body carries its `orderId`. Send the customer to that order's
   confirmation instead of checking out again. A repeated `submit` for such a
   cart returns that order.
+- `CHECKOUT_IN_PROGRESS` (`submit`): another submit of the same cart (a double
+  click, a second tab) is still placing the order. Keep the cart, tell the
+  customer it's being processed, and retry `submit` after a moment; once the
+  order exists it returns that order.

@@ -37,7 +37,9 @@ Depending on the store's confirmation policy, a booking can come back
 confirmation". For manual payment (bank transfer, cash, "Pay by invoice"), render
 `submit`'s `paymentInstructions`: a "Pay invoice" link (https only), bank details
 or a pay-in-person note, plus the due time. A 409 `CART_EXPIRED` at checkout
-means start a new cart. → core skill `checkout.md`.
+means a held slot was taken: start a new cart. A 409 `CHECKOUT_IN_PROGRESS` on
+submit means it's already being placed: keep the cart and ask the customer to
+wait. → core skill `checkout.md`.
 
 ## Customer-facing extras the templates ship
 
