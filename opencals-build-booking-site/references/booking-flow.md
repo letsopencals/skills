@@ -36,10 +36,13 @@ Depending on the store's confirmation policy, a booking can come back
 **received** (not confirmed) and shows "Awaiting payment" / "Awaiting
 confirmation". For manual payment (bank transfer, cash, "Pay by invoice"), render
 `submit`'s `paymentInstructions`: a "Pay invoice" link (https only), bank details
-or a pay-in-person note, plus the due time. A 409 `CART_EXPIRED` at checkout
-means a held slot was taken: start a new cart. A 409 `CHECKOUT_IN_PROGRESS` on
-submit means it's already being placed: keep the cart and ask the customer to
-wait. → core skill `checkout.md`.
+or a pay-in-person note, plus the due time. An expired cart is revived at
+checkout when its slots are still free, so a 409 `CART_EXPIRED` means a held
+slot was taken: start a new cart. A 409 `CHECKOUT_IN_PROGRESS` means it's already
+being placed: keep the cart and ask the customer to wait. A 402
+`PAYMENT_NOT_AUTHORIZED` on submit means the card wasn't authorised (declined,
+3-D Secure not completed): keep the cart, show the card error and let them retry
+payment. → core skill `checkout.md`.
 
 ## Customer-facing extras the templates ship
 

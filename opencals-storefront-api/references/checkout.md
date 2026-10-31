@@ -176,17 +176,26 @@ It's absent for card payments and paid orders.
 `start` and `submit` reject a cart that can't be checked out with **409** and an
 error `code` (`OpencalsApiError.code`):
 
-- `CART_EXPIRED`: a held time is gone. `submit` first revives an expired cart
-  (it re-holds each slot that is still free and carries on, so a customer who
-  paid just after the countdown still gets the booking); only when a slot was
-  taken meanwhile is it a 409, and an uncaptured card payment is released.
-  `start` on an expired cart answers 409 straight away. Start a new cart and ask
-  the customer to re-pick (see `cart-lifecycle.md`).
+- `CART_EXPIRED`: a held time is gone. `start` and `submit` first revive an
+  expired cart (they re-hold each slot that is still free and carry on, so a
+  customer who paid just after the countdown still gets the booking); only when
+  a slot was taken meanwhile is it a 409, and an uncaptured card payment is
+  released. Start a new cart and ask the customer to re-pick (see
+  `cart-lifecycle.md`).
 - `CART_ALREADY_CHECKED_OUT` (`start` only): the cart is already an order; the
   error body carries its `orderId`. Send the customer to that order's
   confirmation instead of checking out again. A repeated `submit` for such a
   cart returns that order.
-- `CHECKOUT_IN_PROGRESS` (`submit`): another submit of the same cart (a double
-  click, a second tab) is still placing the order. Keep the cart, tell the
+- `CHECKOUT_IN_PROGRESS`: another `start` or `submit` of the same cart (a
+  double click, a second tab) is still running. Keep the cart, tell the
   customer it's being processed, and retry `submit` after a moment; once the
   order exists it returns that order.
+
+## Unauthorised card payment (402)
+
+`submit` answers **402** with `code: 'PAYMENT_NOT_AUTHORIZED'` and the
+provider's `paymentStatus` (e.g. `requires_payment_method`, `requires_action`)
+when the card payment was never authorised: declined, 3-D Secure not completed,
+or cancelled. No order is placed and the cart is untouched. Show the card error,
+let the customer confirm the payment again (or with another card), then call
+`submit` again with the same cart.

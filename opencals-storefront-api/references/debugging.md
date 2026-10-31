@@ -19,9 +19,10 @@ not the API.
 | Errors vanish, `data` is `undefined`, no throw | `throwOnError` not set but using try/catch | Set `throwOnError: true`, or always check `{ data, error }` — see `setup.md` |
 | Version / "unsupported version" error on raw calls | Missing `X-Api-Version` | The SDK sends `X-Api-Version: 1`; add it manually on non-SDK calls |
 | Cart calls 404 / act on the wrong cart | `X-Cart-Id` not sent or stale | Persist `cart.id`, send it on every cart/checkout call; recreate on expiry — see `cart-lifecycle.md` |
-| Checkout fails after a while | Cart expired, slots released | Countdown + `extendExpiration` on activity; recreate cart + re-select on expiry |
-| 409 `CART_EXPIRED` / `CART_ALREADY_CHECKED_OUT` at checkout | A held slot was taken after the cart expired (submit revives it when still free), or the cart already became an order (body has `orderId`) | Start a new cart; or show the existing order — see `checkout.md` |
-| 409 `CHECKOUT_IN_PROGRESS` on submit | Another submit of the same cart (double click, second tab) is still running | Keep the cart, show "processing", retry `submit` shortly — it returns the order once placed |
+| Checkout fails after a while | Cart expired and a held slot was taken meanwhile (`start`/`submit` revive it when the slots are still free) | Countdown + `extendExpiration` on activity; recreate cart + re-select on `CART_EXPIRED` |
+| 409 `CART_EXPIRED` / `CART_ALREADY_CHECKED_OUT` at checkout | A held slot was taken after the cart expired, or the cart already became an order (body has `orderId`) | Start a new cart; or show the existing order — see `checkout.md` |
+| 409 `CHECKOUT_IN_PROGRESS` on start/submit | Another checkout of the same cart (double click, second tab) is still running | Keep the cart, show "processing", retry `submit` shortly — it returns the order once placed |
+| 402 `PAYMENT_NOT_AUTHORIZED` on submit | The card payment isn't authorised (`paymentStatus` e.g. `requires_payment_method` after a decline, `requires_action` when 3-D Secure wasn't completed) | Cart is untouched: have the customer confirm the payment again (or another card), then `submit` again |
 | Unpaid / unapproved bookings shown as "Confirmed" | Ignoring `status: 'pending'` + `pendingReason` | Label "Awaiting payment" / "Awaiting confirmation"; thank-you says "received" — see `checkout.md` |
 | Account lists bookings the customer never placed | Cart holds (pending, no order) listed | Skip `status === 'pending' && !orderLineItem` |
 | Slots show at the wrong hour | Treating UTC slot times as local | All slot times are UTC; pass `timezone` on availability, convert for display only |

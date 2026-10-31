@@ -41,14 +41,16 @@ const { data: cart } = await CartService.extendExpiration({
 
 ## When the cart has expired
 
-Checkout `start` on an expired cart fails with **409** `code: 'CART_EXPIRED'`.
-`submit` revives an expired cart instead (re-holds each slot that is still free)
-and only fails with `CART_EXPIRED` when a slot was taken meanwhile. `start` on a
-cart that already became an order fails with `code: 'CART_ALREADY_CHECKED_OUT'`
-and an `orderId`; a `submit` racing another submit of the same cart gets
-`CHECKOUT_IN_PROGRESS` (see `checkout.md`).
+An expired cart (`status: 'abandoned'`) isn't dead yet. Checkout `start` and
+`submit` both revive it: they re-hold each slot that is still free and carry on.
+Adding an item to an expired cart re-opens it with a fresh hold window too. Only
+when a slot was taken meanwhile does checkout fail with **409**
+`code: 'CART_EXPIRED'`. `start` on a cart that already became an order fails
+with `code: 'CART_ALREADY_CHECKED_OUT'` and an `orderId`; a `start` or `submit`
+racing another checkout of the same cart gets `CHECKOUT_IN_PROGRESS` (see
+`checkout.md`).
 
-If a call fails because the cart expired, don't silently retry the same id.
+On `CART_EXPIRED`, don't silently retry the same id.
 Create a fresh cart (`createOrGet` with no id), re-add the items, and tell the
 customer their held slot was released and to re-select — the previous slot may no
 longer be free.
