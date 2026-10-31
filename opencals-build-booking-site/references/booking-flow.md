@@ -30,7 +30,7 @@ import '@/lib/opencals'; // calls setupOpencals() once
 
 ## Thank-you page and booking status
 
-Depending on the store's confirmation policy, a booking can come back
+Depending on the store, a booking can come back
 `status: 'pending'` with `pendingReason` `'awaiting_payment'` or
 `'awaiting_approval'`. Then the thank-you page says the booking was
 **received** (not confirmed) and shows "Awaiting payment" / "Awaiting

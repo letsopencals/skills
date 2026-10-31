@@ -120,22 +120,27 @@ policy does (below).
 
 ## Booking status after submit
 
-The store's `appointmentConfirmationPolicy` (`'automatic' | 'on_payment' |
-'manual'`, on `StoreService.getStorePublicSettings` → `settings`) decides when a
-booking is confirmed. Each appointment comes back either `status: 'scheduled'`
-(confirmed) or `status: 'pending'` with a `pendingReason`:
+The store decides whether a booking is confirmed straight away. Some stores
+confirm every booking; others only bookings that meet their conditions (for
+example, paid in time or booked far enough ahead) and review the rest. The
+storefront API doesn't expose those conditions. Each appointment comes back
+either `status: 'scheduled'` (confirmed) or `status: 'pending'` with a
+`pendingReason`:
 
-- `'awaiting_payment'`: the store confirms once paid (bank transfer, cash or
-  invoice not yet paid, or a failed card payment).
-- `'awaiting_approval'`: the merchant still has to approve it.
+- `'awaiting_payment'`: confirmed once the order is paid (bank transfer, cash
+  or invoice not yet paid, or a card payment whose capture failed).
+- `'awaiting_approval'`: the merchant still has to confirm it. A paid booking
+  can still be awaiting approval.
 
 Never show a pending booking as confirmed. Label it **"Awaiting payment"** /
 **"Awaiting confirmation"**, and on the thank-you page say the booking was
-**received**, not confirmed. Branch on `pendingReason`, not on the policy.
+**received**, not confirmed. Branch on `pendingReason` only.
 
-Deadlines live on the order: `paymentDueAt` (unpaid orders are cancelled after
-it) and `approvalDueAt` (unapproved bookings are cancelled after it); both are
-null when no deadline applies. A cancelled order has `cancelledAt` and
+Deadlines live on the order. After `paymentDueAt` an unpaid booking is either
+cancelled or handed to the merchant to review (it becomes
+`'awaiting_approval'`); cash orders never get one. After `approvalDueAt` a
+booking still awaiting approval is cancelled. Both are null when no deadline
+applies. A cancelled order has `cancelledAt` and
 `cancelReason` (`OrderCancelReason`: `unpaid`, `not_approved`, `declined`,
 `external`, `customer`), and `paymentStatus: 'voided'` when nothing was paid
 (nothing is due). Its appointments are `status: 'canceled'` with a
