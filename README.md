@@ -55,7 +55,8 @@ You need an Opencals store and an API key:
 1. Sign up at [app.opencals.com](https://app.opencals.com) and create a free
    **development store**. You can seed it with a sample business that matches a
    template.
-2. In the dashboard, create a **private storefront key** (`spk_…`) for server
+2. In the dashboard, under **Account → API Keys** (user menu), create a
+   **private storefront key** (`spk_…`) for server
    code. A public key (`sfk_…`) with allowed origins is for browser-only embeds.
 
 ## Install

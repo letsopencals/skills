@@ -119,7 +119,8 @@ template.
      coworking, meeting-room hire, studios or any venue renting rooms by the
      half hour at several sites. See "Resource-booking businesses" below.
 2. **An Opencals private storefront key** (`spk_...`) — from the Opencals
-   dashboard (Users → your user → API Keys). The templates call the API from the
+   dashboard (Account → API Keys, in the user menu; needs the Manage API keys
+   permission, which the store owner has). The templates call the API from the
    server, so the key stays secret and each visitor gets their own rate limits.
    If they don't have one, direct them to create a store and a private storefront
    key before deploying (the site builds without it, but won't return live data).
