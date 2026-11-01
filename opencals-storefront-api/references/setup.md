@@ -88,7 +88,7 @@ if (error) { /* handle */ }
 
 If you prefer exceptions, set `throwOnError: true` in `setupOpencals`. Then
 non-2xx responses throw `OpencalsApiError`, which carries the backend status
-code and field-level validation details, plus (SDK 0.4.0+) `err.code` (a
+code and field-level validation details, plus (SDK 0.3.20+) `err.code` (a
 machine-readable reason such as `CART_EXPIRED`) and `err.body` (the parsed error
 body with extra fields, e.g. `orderId`).
 

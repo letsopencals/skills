@@ -198,7 +198,7 @@ error `code` (`OpencalsApiError.code`):
   released. Start a new cart and ask the customer to re-pick (see
   `cart-lifecycle.md`).
 - `CART_ALREADY_CHECKED_OUT` (`start` only): the cart is already an order; the
-  error body carries its `orderId` (`err.body.orderId`, SDK 0.4.0+). Send the customer to that order's
+  error body carries its `orderId` (`err.body.orderId`, SDK 0.3.20+). Send the customer to that order's
   confirmation instead of checking out again. A repeated `submit` for such a
   cart returns that order.
 - `CHECKOUT_IN_PROGRESS`: another `start` or `submit` of the same cart (a
@@ -225,4 +225,4 @@ let the customer confirm the payment again (or with another card), then call
   `clientSecret`.
 
 Read the reason from `err.code` and extra fields (`orderId`, `paymentStatus`)
-from `err.body` (`OpencalsApiError`, SDK 0.4.0+).
+from `err.body` (`OpencalsApiError`, SDK 0.3.20+).
