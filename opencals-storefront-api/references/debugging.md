@@ -23,6 +23,8 @@ not the API.
 | 409 `CART_EXPIRED` / `CART_ALREADY_CHECKED_OUT` at checkout | A held slot was taken after the cart expired, or the cart already became an order (body has `orderId`) | Start a new cart; or show the existing order — see `checkout.md` |
 | 409 `CHECKOUT_IN_PROGRESS` on start/submit | Another checkout of the same cart (double click, second tab) is still running | Keep the cart, show "processing", retry `submit` shortly — it returns the order once placed |
 | 402 `PAYMENT_NOT_AUTHORIZED` on submit | The card payment isn't authorised (`paymentStatus` e.g. `requires_payment_method` after a decline, `requires_action` when 3-D Secure wasn't completed) | Cart is untouched: have the customer confirm the payment again (or another card), then `submit` again |
+| 400 `PAYMENT_PROVIDER_UNAVAILABLE` on start | Hard-coded a provider (e.g. `cash`) the store hasn't enabled | Offer only `getAvailableProviders`; route on `checkoutMode` — see `checkout.md` |
+| 400 `PAYMENT_REFERENCE_MISMATCH` on submit | Sent a PaymentIntent from another cart or from before the cart total changed | Call `start` again and confirm the new `clientSecret` |
 | Unpaid / unapproved bookings shown as "Confirmed" | Ignoring `status: 'pending'` + `pendingReason` | Label "Awaiting payment" / "Awaiting confirmation"; thank-you says "received" — see `checkout.md` |
 | Account lists bookings the customer never placed | Cart holds (pending, no order) listed | Skip `status === 'pending' && !orderLineItem` |
 | Slots show at the wrong hour | Treating UTC slot times as local | All slot times are UTC; pass `timezone` on availability, convert for display only |

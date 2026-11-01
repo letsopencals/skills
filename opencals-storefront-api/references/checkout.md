@@ -114,6 +114,16 @@ order's customer or this checkout created the customer, so always treat it as
 optional. Don't reimplement payment UI from scratch — reuse the template's
 `components/checkout/*`.
 
+Route on each provider's `checkoutMode` (from `getAvailableProviders`):
+
+- `'internal'` (Stripe): `start` returns a `clientSecret`; confirm the card with
+  Stripe, then `submit` (send the confirmed `stripePaymentIntentId`).
+- `'redirect'`: send the customer to the `redirectUrl` from `start`.
+- `'manual'` (`cash`, `bank_transfer`, `stripe_invoice`): no payment step; call
+  `submit` right after `start`.
+
+`stripe_invoice` is only listed when the store has Stripe connected.
+
 `appointmentsSettings.markAsScheduled` on `submit` is still accepted but no
 longer decides whether the booking is confirmed; the store's confirmation
 policy does (below).
@@ -169,7 +179,7 @@ Render it on the thank-you page:
 - `stripe_invoice`: a **"Pay invoice"** link to `hostedInvoiceUrl`, only if it
   starts with `https://` (it can be null while the invoice is being issued).
 - `bank_transfer`: `bankDetails` (`accountName`, `bankName`, `iban`, `swift`;
-  each nullable).
+  each nullable). The payment reference is the order's `name` (`data.order.name`).
 - `cash`: a "pay in person" note.
 - `dueAt`, when set: "Pay by …" in the customer's timezone. After it, the
   unpaid order is cancelled.
@@ -188,7 +198,7 @@ error `code` (`OpencalsApiError.code`):
   released. Start a new cart and ask the customer to re-pick (see
   `cart-lifecycle.md`).
 - `CART_ALREADY_CHECKED_OUT` (`start` only): the cart is already an order; the
-  error body carries its `orderId`. Send the customer to that order's
+  error body carries its `orderId` (`err.body.orderId`, SDK 0.4.0+). Send the customer to that order's
   confirmation instead of checking out again. A repeated `submit` for such a
   cart returns that order.
 - `CHECKOUT_IN_PROGRESS`: another `start` or `submit` of the same cart (a
@@ -204,3 +214,15 @@ when the card payment was never authorised: declined, 3-D Secure not completed,
 or cancelled. No order is placed and the cart is untouched. Show the card error,
 let the customer confirm the payment again (or with another card), then call
 `submit` again with the same cart.
+
+## Rejected payment method or reference (400)
+
+- `PAYMENT_PROVIDER_UNAVAILABLE` (`start`): the `provider` isn't one the store
+  has enabled. Offer only what `getAvailableProviders` returns.
+- `PAYMENT_REFERENCE_MISMATCH` (`submit`): the `stripePaymentIntentId` sent isn't
+  a PaymentIntent `start` created for this cart at its current amount (e.g. the
+  cart changed after `start`). Call `start` again and pay with the new
+  `clientSecret`.
+
+Read the reason from `err.code` and extra fields (`orderId`, `paymentStatus`)
+from `err.body` (`OpencalsApiError`, SDK 0.4.0+).
