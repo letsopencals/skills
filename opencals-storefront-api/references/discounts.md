@@ -67,6 +67,15 @@ type CartItemAppliedDiscount = {
 
 `CODE_NO_CREDIT` is the error when a credit-backed code has no remaining balance.
 
+## Stacking
+
+Discounts are either exclusive or **combinable**. Per line item, only the single
+largest exclusive discount applies; combinable discounts apply on top. A
+discount that only targets add-ons (`targetType: 'add_on'`) is usually set up as
+combinable so it stacks with the line's best offer, and it can come back with a
+zero amount on a line that has none of those add-ons. Hide zero-amount
+discounts rather than showing "-$0.00".
+
 ## Where discounts appear in the cart
 
 - **Per item**: `item.discounts: CartItemAppliedDiscount[]` (includes balance/time).
