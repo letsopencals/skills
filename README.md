@@ -47,6 +47,7 @@ All MIT-licensed, Next.js, on GitHub under [letsopencals](https://github.com/let
 | Tensile | Reformer Pilates studio (classes with limited spots) | `template-reformer` |
 | Alba Dental | Dental group (five studios, many clinicians, kids site) | `template-alba` |
 | Gable | Coworking (desks, meeting rooms, booths and studios at six houses) | `template-gable` |
+| Afterglow | Content gym (classes with photo and video add-ons, crew shoots, two sites) | `template-afterglow` |
 
 ## Before you start
 

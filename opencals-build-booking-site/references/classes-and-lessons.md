@@ -145,3 +145,33 @@ slot to the cart (`numberOfAttendees`, `addOns`, the UTC slot with
 move or cancel up to 12 hours before (`cancelGap` 43200 s), and a level path
 in the account counts completed classes as guidance only; it never blocks a
 booking.
+
+## 7. Classes with paid extras: the Afterglow worked example
+
+`template-afterglow` is a content gym: the same class model as Tensile (one
+variant per class × site × coach, `maxAttendees` = spots, Full classes inferred
+from the weekly pattern), plus paid extras the customer picks on the class
+itself.
+
+- **Extras are add-ons on every class.** The crew's photo and video packages
+  (Class Clips, Photo Set, Slow-mo Reel, Raw Camera Roll) are add-ons on each
+  class and coaching product. Fetch them once per product and show them in the
+  expanded class row; send the picked ones as `addOns` with the cart item.
+  Site copy recognises them by title to add what the customer gets and when.
+- **Rooms that aren't locations.** A site has several rooms ("sets"). They are
+  not API entities: site copy maps each class to its room, and the schedule
+  groups a day by room.
+- **Crew as staff.** Content sessions are products with the photographers and
+  filmmakers as staff, so the Staff rule stops one person being booked twice.
+  Two products that use the same wall share a product pool.
+- **Bookings for two.** Partner training and duo shoots are one booking with a
+  custom attribute (`people = "2"`), not two seats.
+- **Offers that stack on the extras.** Class offers (first class, early
+  morning, a code) are not combinable, so each line gets the biggest one. A
+  discount that only touches the add-ons (main `value` 0 with an add-on rate)
+  must be **combinable**, or it loses to the class offer every time; combinable,
+  it stacks on the add-ons. It can come back with a zero amount on a line
+  without those add-ons: hide zero-amount discounts.
+- **Golden hour.** Outdoor classes that overlap the local sunrise or sunset hour
+  get a badge, computed in the template from the site's coordinates (a small
+  NOAA solar calculation, no API call).

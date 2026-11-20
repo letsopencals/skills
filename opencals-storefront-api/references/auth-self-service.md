@@ -80,6 +80,13 @@ When rendering them:
 - Orders: show `paymentDueAt` / `approvalDueAt` while pending; `paymentStatus`
   can be `'voided'` (cancelled before payment, nothing due). See `checkout.md`.
 
+From SDK 0.3.21, list items carry their `addOns` (each with `addOn.title`), so a
+booking history can show what was booked without a `find` per appointment. Order
+list add-on lines carry `addOn` too; it is `null` if the add-on was later deleted.
+`subtotal` on carts and orders is already net of discounts: for a "before offers"
+line, add up each line's and add-on's `originalSubtotal`, and take the total and
+each applied discount straight from the response.
+
 > `saveCustomer` (checkout) vs sign-up: `saveCustomer` attaches customer details
 > to a **cart** for an order and may create a lightweight customer without a
 > password — call it during checkout. `AuthService.signUp` creates a

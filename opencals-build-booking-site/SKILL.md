@@ -4,7 +4,8 @@ description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
   (salon, barbershop, clinic, padel/squash club, luxury car rental, language
-  school, villa rental, reformer Pilates studio, dental group, coworking) and the
+  school, villa rental, reformer Pilates studio, dental group, coworking,
+  content gym) and the
   @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
@@ -18,7 +19,8 @@ description: >-
   classes via template-reformer, and dental practices or clinic groups with
   many clinicians across several studios via template-alba, and coworking
   networks (desks, meeting rooms, booths, studios at several buildings) via
-  template-gable. For the
+  template-gable, and gyms that sell photos or video with their classes (paid
+  add-ons on every class, crew shoots) via template-afterglow. For the
   exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
@@ -118,6 +120,18 @@ template.
      meeting invitees as guests, and a Week plan account. Start here for
      coworking, meeting-room hire, studios or any venue renting rooms by the
      half hour at several sites. See "Resource-booking businesses" below.
+   - `template-afterglow` (Afterglow) - content gym in Miami ("You train. We
+     shoot."; deco cream, golden-hour gradients, viewfinders and grease
+     pencil): two sites, a schedule grouped by **set** (room) with spots left,
+     Full classes and golden-hour badges from local sunrise and sunset, story
+     rings that open full-screen stories, **shot add-ons** (clips, photo set,
+     slow-mo reel, camera roll) picked on every class row, content sessions
+     with the crew as staff, physique coaching by tier at 30/60/90 minutes,
+     staffless recovery suites and bar tables, a **Shot List** cart, a
+     release-form checkout, a call-sheet confirmation with a story card, and a
+     "Your roll" account. Start here for boutique gyms, studios that sell
+     content or photo packages, or any class business with paid extras picked
+     at booking. See "Fitness and Pilates studios" below.
 2. **An Opencals private storefront key** (`spk_...`) — from the Opencals
    dashboard (Users → your user → API Keys). The templates call the API from the
    server, so the key stays secret and each visitor gets their own rate limits.
@@ -136,7 +150,7 @@ npm install
 ```
 
 Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
-`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer`, `template-alba` or `template-gable` as appropriate. These are complete apps — services catalogue, real-time
+`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer`, `template-alba`, `template-gable` or `template-afterglow` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -246,6 +260,9 @@ learns each series' weekly pattern and shows a missing week as **Full**, with a
 (1:1 and duet) are one seat each and share a product pool per studio; a duet
 is one booking with a `people: "2"` custom attribute. `template-reformer` is
 the worked example; full pattern in `references/classes-and-lessons.md` §6.
+`template-afterglow` adds paid extras on every class (photo and video add-ons
+picked on the class row), crew as staff on content sessions, and an add-on-only
+discount that must be combinable to stack on the class offer; see §7.
 
 ## Resources
 
