@@ -66,7 +66,8 @@ Full setup details, the complete service list, `X-Api-Version`, and the
    `getCurrentAvailabilitiesMerged` (calendar highlighting). → `references/availability.md`
 2. **Cart** → `CartService.createOrGet`, persist the `X-Cart-Id`. → `references/cart-lifecycle.md`
 3. **Appointment** → `AppointmentService.create` (slot + `cartId` + `numberOfAttendees` + optional guests/add-ons). → `references/guests-attendees.md`
-4. **Checkout** → `CheckoutService.start → saveCustomer → saveAnswers → submit`. → `references/checkout.md`
+4. **Checkout** → `CheckoutService.start → saveCustomer → saveAnswers → submit`. The booking may come back
+   `pending` (awaiting payment or approval), not confirmed. → `references/checkout.md`
 
 ## Reference files (load the one you need)
 
@@ -78,7 +79,7 @@ Full setup details, the complete service list, `X-Api-Version`, and the
 | `references/custom-duration.md` | `allowCustomDuration` / `maxDuration`, quantity = duration-units pricing rule, multi-day (1-day base) bookings |
 | `references/guests-attendees.md` | `numberOfAttendees`, `maxAttendees`/`attendees`, `addGuest` / `removeGuest` |
 | `references/cart-lifecycle.md` | create/get, `X-Cart-Id`, `expiresAt`, `extendExpiration`, expiry countdown |
-| `references/checkout.md` | `saveCustomer` timing, billing vs delivery address, marketing consent, checkout questions |
+| `references/checkout.md` | `saveCustomer` timing, billing vs delivery address, marketing consent, checkout questions, booking status after submit (`pending` + `pendingReason`), `paymentInstructions` for manual payment, 409 cart conflicts |
 | `references/auth-self-service.md` | password + passwordless + OAuth login, sessions, `SelfService` (profile, appointments, consent) |
 | `references/reschedule-cancel.md` | `reschedule` / `cancel`, `rescheduleGap` / `cancelGap`, excluding the moved appointment |
 | `references/discounts.md` | automatic vs code (`applyCode`) vs balance credit (`valueType: 'time'`), error codes |
@@ -103,6 +104,9 @@ Full setup details, the complete service list, `X-Api-Version`, and the
 - **All slot dates/times are UTC.** Convert to the customer's timezone for
   display only; send `timezone` on availability queries so slots align to the
   local day.
+- **Pending isn't confirmed.** A placed booking with `status: 'pending'` is
+  awaiting payment or the merchant's approval (`pendingReason`): never label it
+  "Confirmed". A pending appointment with no order is a cart hold; don't list it.
 - **Surface real errors.** The SDK throws `OpencalsApiError` with the backend
   status code and field-level detail — never swallow it into a generic 500.
 - The SDK and the official templates are MIT-licensed; the hosted API is

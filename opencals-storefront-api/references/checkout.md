@@ -113,3 +113,116 @@ sign the customer in) is only present when the request is signed in as the
 order's customer or this checkout created the customer, so always treat it as
 optional. Don't reimplement payment UI from scratch — reuse the template's
 `components/checkout/*`.
+
+Route on each provider's `checkoutMode` (from `getAvailableProviders`):
+
+- `'internal'` (Stripe): `start` returns a `clientSecret`; confirm the card with
+  Stripe, then `submit` (send the confirmed `stripePaymentIntentId`).
+- `'redirect'`: send the customer to the `redirectUrl` from `start`.
+- `'manual'` (`cash`, `bank_transfer`, `stripe_invoice`): no payment step; call
+  `submit` right after `start`.
+
+`stripe_invoice` is only listed when the store has Stripe connected.
+
+`appointmentsSettings.markAsScheduled` on `submit` is still accepted but no
+longer decides whether the booking is confirmed; the store's confirmation
+policy does (below).
+
+## Booking status after submit
+
+The store decides whether a booking is confirmed straight away. Some stores
+confirm every booking; others only bookings that meet their conditions (for
+example, paid in time or booked far enough ahead) and review the rest. The
+storefront API doesn't expose those conditions. Each appointment comes back
+either `status: 'scheduled'` (confirmed) or `status: 'pending'` with a
+`pendingReason`:
+
+- `'awaiting_payment'`: confirmed once the order is paid (bank transfer, cash
+  or invoice not yet paid, or a card payment whose capture failed).
+- `'awaiting_approval'`: the merchant still has to confirm it. A paid booking
+  can still be awaiting approval.
+
+Never show a pending booking as confirmed. Label it **"Awaiting payment"** /
+**"Awaiting confirmation"**, and on the thank-you page say the booking was
+**received**, not confirmed. Branch on `pendingReason` only.
+
+Deadlines live on the order. After `paymentDueAt` an unpaid booking is either
+cancelled or handed to the merchant to review (it becomes
+`'awaiting_approval'`); cash orders never get one. After `approvalDueAt` a
+booking still awaiting approval is cancelled. Both are null when no deadline
+applies. A cancelled order has `cancelledAt` and
+`cancelReason` (`OrderCancelReason`: `unpaid`, `not_approved`, `declined`,
+`external`, `customer`), and `paymentStatus: 'voided'` when nothing was paid
+(nothing is due). Its appointments are `status: 'canceled'` with a
+`cancelReason` (`unpaid`, `not_approved`, `declined`, `order_cancelled`).
+
+A `pending` appointment **without an order** (`orderLineItem` is null) is a
+cart hold, not a booking: it expires with the cart (15 minutes by default).
+Don't list it in the account (`status === 'pending' && !orderLineItem` → skip).
+
+Orders no longer carry `logs` (merchant-only since SDK 0.3.20); drop any read
+of `order.logs`.
+
+## Manual payment: `paymentInstructions`
+
+Manual providers (`bank_transfer`, `cash`, `stripe_invoice` — "Pay by invoice")
+create the order without taking money. When something is still due, `submit`
+also returns `paymentInstructions` (also on an idempotent re-submit):
+
+```ts
+const { data } = await CheckoutService.submit({ headers: { 'X-Cart-Id': cartId }, body });
+const pi = data.paymentInstructions; // { provider, hostedInvoiceUrl?, dueAt?, bankDetails? } | undefined
+```
+
+Render it on the thank-you page:
+
+- `stripe_invoice`: a **"Pay invoice"** link to `hostedInvoiceUrl`, only if it
+  starts with `https://` (it can be null while the invoice is being issued).
+- `bank_transfer`: `bankDetails` (`accountName`, `bankName`, `iban`, `swift`;
+  each nullable). The payment reference is the order's `name` (`data.order.name`).
+- `cash`: a "pay in person" note.
+- `dueAt`, when set: "Pay by …" in the customer's timezone. After it, the
+  unpaid order is cancelled.
+
+It's absent for card payments and paid orders.
+
+## Checkout conflicts (409)
+
+`start` and `submit` reject a cart that can't be checked out with **409** and an
+error `code` (`OpencalsApiError.code`):
+
+- `CART_EXPIRED`: a held time is gone. `start` and `submit` first revive an
+  expired cart (they re-hold each slot that is still free and carry on, so a
+  customer who paid just after the countdown still gets the booking); only when
+  a slot was taken meanwhile is it a 409, and an uncaptured card payment is
+  released. Start a new cart and ask the customer to re-pick (see
+  `cart-lifecycle.md`).
+- `CART_ALREADY_CHECKED_OUT` (`start` only): the cart is already an order; the
+  error body carries its `orderId` (`err.body.orderId`, SDK 0.3.20+). Send the customer to that order's
+  confirmation instead of checking out again. A repeated `submit` for such a
+  cart returns that order.
+- `CHECKOUT_IN_PROGRESS`: another `start` or `submit` of the same cart (a
+  double click, a second tab) is still running. Keep the cart, tell the
+  customer it's being processed, and retry `submit` after a moment; once the
+  order exists it returns that order.
+
+## Unauthorised card payment (402)
+
+`submit` answers **402** with `code: 'PAYMENT_NOT_AUTHORIZED'` and the
+provider's `paymentStatus` (e.g. `requires_payment_method`, `requires_action`)
+when the card payment was never authorised: declined, 3-D Secure not completed,
+or cancelled. No order is placed and the cart is untouched. Show the card error,
+let the customer confirm the payment again (or with another card), then call
+`submit` again with the same cart.
+
+## Rejected payment method or reference (400)
+
+- `PAYMENT_PROVIDER_UNAVAILABLE` (`start`): the `provider` isn't one the store
+  has enabled. Offer only what `getAvailableProviders` returns.
+- `PAYMENT_REFERENCE_MISMATCH` (`submit`): the `stripePaymentIntentId` sent isn't
+  a PaymentIntent `start` created for this cart at its current amount (e.g. the
+  cart changed after `start`). Call `start` again and pay with the new
+  `clientSecret`.
+
+Read the reason from `err.code` and extra fields (`orderId`, `paymentStatus`)
+from `err.body` (`OpencalsApiError`, SDK 0.3.20+).
