@@ -81,6 +81,46 @@ the attendees (they get the calendar invite). `template-gable` is the worked
 example: six houses, a flex floor per house, studio desks, rooms, booths and
 studios, one product group per kind per house.
 
+### Private rooms priced per team → team-size variants in one product pool
+
+An escape room, a VR arena or a party room is booked by **the whole group**, and
+the price depends on how many come (2 players £70, 4 players £108, 6 players
+£138), not on a per-head rate. Model each room as **one product group with a
+variant per team size**:
+
+- variant slug `<room>-<n>p`, `variantTitle` "<n> players", price = the group
+  price for that size;
+- `maxAttendees: 1` (one team per session) and **no staff**;
+- **every variant of the room in one product pool**. Each variant is its own
+  `productId`, so without the pool the Self rule would let a 2-player and a
+  6-player team book the same room at the same time. The Product Pool rule makes
+  a booking for any size block the room for all of them;
+- the same duration and location on every variant. Make the duration the whole
+  visit (briefing + game + debrief), and give the room a schedule whose sessions
+  land on a fixed grid (e.g. every 90 minutes from midnight) so start times stay
+  tidy.
+
+Because the pool blocks every variant together, read availability for **one**
+variant per room (the smallest team) and cut the free ranges into sessions on
+the client. Book the variant for the chosen size; it already carries the price.
+If the UI needs the head count on the booking (for the confirmation or the
+venue), send it as a custom attribute (`customAttributes: { people: "4" }`) next
+to the variant. Show the group price and the price per head on every team-size
+button. Per-head add-ons such as workshops stay ordinary staff-led products with
+`maxAttendees` = seats and `numberOfAttendees` on the booking.
+
+`template-otherdoor` is the worked example: two venues, six rooms, each a
+product group in a `rooms` collection with team-size variants in a pool, and
+per-head workshops in a `workshops` collection.
+
+**Customising idea: a world per room.** When the rooms are the product, the
+room page can be a landing page of its own. Otherdoor keeps the header, footer,
+booking panel and data shared and gives each room's page its own palette,
+display font, layout and motion (a space station, a jungle temple, a comic-book
+heist) on a hero video and stills. Keep the booking panel itself plain and the
+same in every world (date strip above plain session buttons, team sizes, total
+and the primary action in view) and theme only its frame and colour variables.
+
 ### Staff-led classes & lessons → Staff rule (+ group capacity)
 
 Lessons and classes are ordinary products **assigned to coach staff** (`staffIds`).

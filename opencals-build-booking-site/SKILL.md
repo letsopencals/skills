@@ -4,7 +4,8 @@ description: >-
   Build, customise and deploy a production booking website on the Opencals
   hosted API by starting from one of the official open-source Next.js templates
   (salon, barbershop, clinic, padel/squash club, luxury car rental, language
-  school, villa rental, reformer Pilates studio, dental group, coworking) and the
+  school, villa rental, reformer Pilates studio, dental group, coworking, escape
+  rooms) and the
   @opencals/storefront-sdk.
   Use when the user wants a booking/appointment/scheduling site, an Opencals
   storefront, gives you a business idea + inspiration and asks you to build the
@@ -18,7 +19,8 @@ description: >-
   classes via template-reformer, and dental practices or clinic groups with
   many clinicians across several studios via template-alba, and coworking
   networks (desks, meeting rooms, booths, studios at several buildings) via
-  template-gable. For the
+  template-gable, and escape rooms or any private room sold to a whole team at
+  a group price via template-otherdoor. For the
   exact API/SDK call shapes, use the companion
   `opencals-storefront-api` skill.
 ---
@@ -118,6 +120,16 @@ template.
      meeting invitees as guests, and a Week plan account. Start here for
      coworking, meeting-room hire, studios or any venue renting rooms by the
      half hour at several sites. See "Resource-booking businesses" below.
+   - `template-otherdoor` (Otherdoor) — immersive escape rooms in Edinburgh
+     (dark, modern shell; every room page a different world): two venues and
+     six private rooms booked **by the whole team**, each room one product
+     with a variant per team size at the group price, all variants in one
+     **product pool** so any team size blocks the room, staffless sessions on
+     a fixed grid, per-head workshops with seats, a corridor of doors on the
+     home page, a door-card cart and a "door unlocks" confirmation. Start
+     here for escape rooms, VR arenas, party or karaoke rooms, or any themed
+     room rented by the session with a price per group. See
+     "Resource-booking businesses" below.
 2. **An Opencals private storefront key** (`spk_...`) — from the Opencals
    dashboard (Users → your user → API Keys). The templates call the API from the
    server, so the key stays secret and each visitor gets their own rate limits.
@@ -136,7 +148,7 @@ npm install
 ```
 
 Swap the repo for `template-frisor`, `template-clarity`, `template-volt`,
-`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer`, `template-alba` or `template-gable` as appropriate. These are complete apps — services catalogue, real-time
+`template-noir`, `template-bali-villas`, `template-fluently`, `template-reformer`, `template-alba`, `template-gable` or `template-otherdoor` as appropriate. These are complete apps — services catalogue, real-time
 availability, cart, checkout, Stripe payments and customer accounts are already
 wired. Do not rebuild them.
 
@@ -190,7 +202,9 @@ Free tier is fine for launch; the user pays Opencals only for bookings.
 Some venues book *things*, often many interchangeable units, sometimes alongside
 staff-led classes. The padel/volt template is the worked example; `template-gable`
 applies the same model to coworking (rooms, booths and desks at six buildings,
-plus a flex floor sold by the seat through `maxAttendees`). Model each with
+plus a flex floor sold by the seat through `maxAttendees`), and
+`template-otherdoor` sells private rooms by team size (a variant per team size
+in one product pool per room). Model each with
 the conflict rule that fits — don't force everything through "staff". Custom
 duration uses `allowCustomDuration`, not duration-variant products. Full details,
 the three-rule decision table, multi-club modelling and the per-club availability strategy are in
