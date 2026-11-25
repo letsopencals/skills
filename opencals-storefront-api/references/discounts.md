@@ -38,10 +38,17 @@ type DiscountCodeErrorResponse = {
     | 'CODE_CUSTOMER_INELIGIBLE'
     | 'CODE_NO_MATCHING_ITEMS'
     | 'CODE_NO_CREDIT'
-    | 'minimum_requirement_not_met';
+    | 'minimum_requirement_not_met'
+    | 'MINIMUM_DURATION_NOT_MET'   // SDK 0.3.21+
+    | 'MAXIMUM_DURATION_EXCEEDED'; // SDK 0.3.21+
   statusCode: number;
 };
 ```
+
+A code's booked-time limits count the **whole order** (the total booked time of the bookings it covers, not per
+appointment and not multiplied by quantity or attendees). Too little → `MINIMUM_DURATION_NOT_MET`, too much →
+`MAXIMUM_DURATION_EXCEEDED`; the `message` already says what's needed ("Book at least 2 hours…"). If you key a
+`Record` by the code type, add both keys when you move to 0.3.21, or fall back to `message` for unknown codes.
 
 ## 3. Balance-based (credit) discounts
 
