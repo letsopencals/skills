@@ -69,6 +69,17 @@ The customer's appointments and orders are read via `AppointmentService.list` /
 scopes results to them. Rescheduling and cancellation of their own appointments:
 see `reschedule-cancel.md`.
 
+When rendering them:
+
+- Skip cart holds: `status === 'pending' && !orderLineItem`.
+- A placed booking with `status: 'pending'` isn't confirmed yet: label it from
+  `pendingReason` (`'awaiting_payment'` → "Awaiting payment",
+  `'awaiting_approval'` → "Awaiting confirmation"), never "Confirmed".
+- `status: 'canceled'` may carry a `cancelReason` (`unpaid`, `not_approved`,
+  `declined`, `order_cancelled`).
+- Orders: show `paymentDueAt` / `approvalDueAt` while pending; `paymentStatus`
+  can be `'voided'` (cancelled before payment, nothing due). See `checkout.md`.
+
 > `saveCustomer` (checkout) vs sign-up: `saveCustomer` attaches customer details
 > to a **cart** for an order and may create a lightweight customer without a
 > password — call it during checkout. `AuthService.signUp` creates a

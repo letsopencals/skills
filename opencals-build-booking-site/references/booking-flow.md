@@ -28,11 +28,28 @@ import '@/lib/opencals'; // calls setupOpencals() once
    collecting customer details, billing/delivery address and marketing consent.
    → core skill `checkout.md`.
 
+## Thank-you page and booking status
+
+Depending on the store, a booking can come back
+`status: 'pending'` with `pendingReason` `'awaiting_payment'` or
+`'awaiting_approval'`. Then the thank-you page says the booking was
+**received** (not confirmed) and shows "Awaiting payment" / "Awaiting
+confirmation". For manual payment (bank transfer, cash, "Pay by invoice"), render
+`submit`'s `paymentInstructions`: a "Pay invoice" link (https only), bank details
+or a pay-in-person note, plus the due time. An expired cart is revived at
+checkout when its slots are still free, so a 409 `CART_EXPIRED` means a held
+slot was taken: start a new cart. A 409 `CHECKOUT_IN_PROGRESS` means it's already
+being placed: keep the cart and ask the customer to wait. A 402
+`PAYMENT_NOT_AUTHORIZED` on submit means the card wasn't authorised (declined,
+3-D Secure not completed): keep the cart, show the card error and let them retry
+payment. → core skill `checkout.md`.
+
 ## Customer-facing extras the templates ship
 
 - **Accounts**: `AuthService` (password, passwordless code, OAuth) + `SelfService`
   (profile, marketing consent). Account pages list the customer's appointments
-  and orders. → core skill `auth-self-service.md`.
+  and orders: skip cart holds (`pending` with no `orderLineItem`) and label
+  pending bookings by `pendingReason`. → core skill `auth-self-service.md`.
 - **Reschedule / cancel**: `AppointmentService.reschedule` / `cancel`, gated by
   `rescheduleGap` / `cancelGap`; reschedule availability must pass
   `excludeAppointmentId`. → core skill `reschedule-cancel.md`.
