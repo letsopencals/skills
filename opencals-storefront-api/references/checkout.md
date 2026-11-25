@@ -97,8 +97,10 @@ per-channel opt-in. Set it at checkout as above, or later from the account (see
 Stores can require custom questions. Fetch them with
 `CheckoutService.getCartQuestions`, collect answers, then
 `CheckoutService.saveAnswers` with
-`{ answers: [{ questionId, question, answer, fileIds? }] }`: `question` is the
-question text (kept for the record) and is required, as is `answer` (a string).
+`{ answers: [{ questionId, language, answer, fileIds? }] }`: `answer` is a string, and
+`language` is the language the questions were shown in (SDK 0.3.21+). The API then keeps the
+question title in that language with the answer (falling back to English). `question` (the
+question text) is optional and deprecated: still accepted, and used when `language` isn't sent.
 You can also pass `checkoutQuestionAnswers` at appointment creation. Question translations: `CheckoutQuestionService.listTranslations`.
 
 ## Payment / submit
